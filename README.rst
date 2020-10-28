@@ -69,38 +69,95 @@ Return an IB_LID, IB_GUID, or IB_GID object depending on the address passed as a
 Base Hardware Address object
 ----------------------------
 
-hwaddress.core.Base_HWA
-~~~~~~~~~~~~~~~~~~~~~~~
+***hwaddress.core.Base_HWA***
+
+.. code:: python 
+
+    >>> hwa = Base_HWA('12:34:56:78:90:ab')
+    >>> hwa
+    Base_HWA(12-34-56-78-90-ab)
+    >>> str(hwa)
+    '12-34-56-78-90-ab'
 
 Methods
-+++++++
+~~~~~~~
 
 * format(delimiter=None, group=None, upper=None)
 
-    Format address with given formatting options.
+    ..
 
-    If an option is not specified,
-    the option defined by the class will be used
+        Format address with given formatting options.
 
-    Args:
-        delimiter (str): character separating hex digits.
-        group (int): how many hex digits in each group.
-        upper (bool): True for uppercase, False for lowercase.
-    
+        If an option is not specified,
+        the option defined by the class will be used
+
+        Args:
+            delimiter (str): character separating hex digits.
+            group (int): how many hex digits in each group.
+            upper (bool): True for uppercase, False for lowercase.
+
+    .. code:: python
+
+        >>> hwa.format(':')
+        '12:34:56:78:90:ab'
+        >>> hwa.format('.', 4, True)
+        '1234.5678.90AB'
+
 
 Properties
-+++++++++
+~~~~~~~~~~
 
-* int (Integer representation of address.)
-* hex (Hexadecimal representation of address.)
-* bin (Binary representation of address.)
-* binary (Padded binary representation of each hex digit in address.)
+* int
 
+    Integer representation of address.
+
+    .. code:: python
+
+        >>> hwa.int
+        20015998341291
+
+* hex
+
+    Hexadecimal representation of address.
+
+    .. code:: python
+
+        >>> hwa.hex
+        '0x1234567890ab'
+
+* bin
+
+    Binary representation of address.
+
+    .. code:: python
+
+        >>> hwa.bin
+        '0b100100011010001010110011110001001000010101011'
+
+* binary
+
+    Padded binary representation of each hex digit in address.
+
+    .. code:: python
+
+        >>> hwa.binary
+        '0001 0010 0011 0100 0101 0110 0111 1000 1001 0000 1010 1011'
+
+
+EUI Address objects
+-------------------
 
 hwaddress.core.EUI_Mixin
 ~~~~~~~~~~~~~~~~~~~~~~~~
 
 
+WWN Address objects
+-------------------
+
 hwaddress.core.WWN_Mixin
 ~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+IB Address objects
+-------------------
 
