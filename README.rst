@@ -74,6 +74,8 @@ Base Hardware Address object
 hwaddress.MAC(address)
 ~~~~~~~~~~~~~~~~~~~~~~
 
+::
+
     bit-length: 48
     delimiter: ':'
     grouping: 2
@@ -103,6 +105,8 @@ Methods
             group (int): how many hex digits in each group.
             upper (bool): True for uppercase, False for lowercase.
 
+        Returns: str
+
     .. code:: python
 
         >>> mac.format('-')
@@ -116,7 +120,11 @@ Properties
 
 * int
 
-    Integer representation of address.
+    ::
+
+        Integer representation of address.
+
+        Returns: int
 
     .. code:: python
 
@@ -157,11 +165,34 @@ EUI Address objects
 hwaddress.core.EUI_Mixin
 ~~~~~~~~~~~~~~~~~~~~~~~~
 
+Properties
+++++++++++
+
+* oui
+* cid
+* oui36
+
 hwaddress.EUI_48(address)
 ~~~~~~~~~~~~~~~~
 
+Inherits from: MAC, EUI_Mixin
+
+::
+
+    bit-length: 48
+    delimiter: '-'
+    grouping: 2
+
 hwaddress.EUI_64(address)
 ~~~~~~~~~~~~~~~~
+
+Inherits from: MAC, EUI_Mixin
+
+::
+
+    bit-length: 64
+    delimiter: '-'
+    grouping: 2
 
 
 WWN Address objects
@@ -170,11 +201,33 @@ WWN Address objects
 hwaddress.core.WWN_Mixin
 ~~~~~~~~~~~~~~~~~~~~~~~~
 
+Properties
+++++++++++
+
+* naa
+* oui
+
 hwaddress.WWN(address)
 ~~~~~~~~~~~~~
 
+Inherits from: MAC, WWN_Mixin
+
+::
+
+    bit-length: 64
+    delimiter: ':'
+    grouping: 2
+
 hwaddress.WWNx(address)
 ~~~~~~~~~~~~~~
+
+Inherits from: MAC, WWN_Mixin
+
+::
+
+    bit-length: 128
+    delimiter: ':'
+    grouping: 2
 
 
 IB Address objects
@@ -183,9 +236,40 @@ IB Address objects
 hwaddress.IB_LID(address)
 ~~~~~~~~~~~~~~~~
 
+Inherits from: MAC
+
+::
+
+    bit-length: 16
+    delimiter: ''
+    grouping: 4
+
 hwaddress.IB_GUID(address)
 ~~~~~~~~~~~~~~~~~
 
+Inherits from: EUI_64
+
+::
+
+    bit-length: 64
+    delimiter: ':'
+    grouping: 4
+
 hwaddress.IB_GID(address)
 ~~~~~~~~~~~~~~~~
+
+Inherits from: MAC
+
+::
+
+    bit-length: 128
+    delimiter: ':'
+    grouping: 4
+
+Properties
+++++++++++
+
+* prefix
+* guid
+
 
