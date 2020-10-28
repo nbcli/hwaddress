@@ -2,7 +2,7 @@
 hwaddress
 =========
 
-A lightweight EUI-48, EUI-64 based hardware address library.
+A lightweight EUI-48, EUI-64 based hardware (MAC) address library.
 
 .. contents::
     :local:
@@ -14,7 +14,8 @@ Factory Functions
 hwaddress.eui_address(address)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Return an EUI_48 or EUI_64 object depending on the address passed as an argument.
+Return an EUI_48 or EUI_64 object depending
+on the address passed as an argument.
 
 .. code:: python
 
@@ -40,15 +41,16 @@ Return a WWN or WWNx object depending on the address passed as an argument.
     >>> wwn_address(2310967104789064653)
     WWN(20:12:34:56:78:90:ab:cd)
     >>> wwn_address('60:12:34:56:78:90:ab:cd:12:34:56:78:90:ab:cd:ef')
-    WWNx(60-12-34-56-78-90-ab-cd-12-34-56-78-90-ab-cd-ef)
+    WWNx(60:12:34:56:78:90:ab:cd:12:34:56:78:90:ab:cd:ef)
     >>> wwn_address(127700410475040014613822894157901581807)
-    WWNx(60-12-34-56-78-90-ab-cd-12-34-56-78-90-ab-cd-ef)
+    WWNx(60:12:34:56:78:90:ab:cd:12:34:56:78:90:ab:cd:ef)
 
 
 hwaddress.ib_address(address)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Return an IB_LID, IB_GUID, or IB_GID object depending on the address passed as an argument.
+Return an IB_LID, IB_GUID, or IB_GID object depending
+on the address passed as an argument.
 
 .. code:: python
 
@@ -69,22 +71,27 @@ Return an IB_LID, IB_GUID, or IB_GID object depending on the address passed as a
 Base Hardware Address object
 ----------------------------
 
-***hwaddress.core.Base_HWA***
+hwaddress.MAC(address)
+~~~~~~~~~~~~~~~~~~~~~~
+
+    bit-length: 48
+    delimiter: ':'
+    grouping: 2
 
 .. code:: python 
 
-    >>> hwa = Base_HWA('12:34:56:78:90:ab')
-    >>> hwa
-    Base_HWA(12-34-56-78-90-ab)
-    >>> str(hwa)
-    '12-34-56-78-90-ab'
+    >>> mac = MAC('12:34:56:78:90:ab')
+    >>> mac
+    mac(12:34:56:78:90:ab)
+    >>> str(mac)
+    '12:34:56:78:90:ab'
 
 Methods
-~~~~~~~
++++++++
 
 * format(delimiter=None, group=None, upper=None)
 
-    ..
+    ::
 
         Format address with given formatting options.
 
@@ -98,14 +105,14 @@ Methods
 
     .. code:: python
 
-        >>> hwa.format(':')
-        '12:34:56:78:90:ab'
-        >>> hwa.format('.', 4, True)
+        >>> mac.format('-')
+        '12-34-56-78-90-ab'
+        >>> mac.format('.', 4, True)
         '1234.5678.90AB'
 
 
 Properties
-~~~~~~~~~~
+++++++++++
 
 * int
 
@@ -113,7 +120,7 @@ Properties
 
     .. code:: python
 
-        >>> hwa.int
+        >>> mac.int
         20015998341291
 
 * hex
@@ -122,7 +129,7 @@ Properties
 
     .. code:: python
 
-        >>> hwa.hex
+        >>> mac.hex
         '0x1234567890ab'
 
 * bin
@@ -131,7 +138,7 @@ Properties
 
     .. code:: python
 
-        >>> hwa.bin
+        >>> mac.bin
         '0b100100011010001010110011110001001000010101011'
 
 * binary
@@ -140,7 +147,7 @@ Properties
 
     .. code:: python
 
-        >>> hwa.binary
+        >>> mac.binary
         '0001 0010 0011 0100 0101 0110 0111 1000 1001 0000 1010 1011'
 
 
@@ -150,6 +157,12 @@ EUI Address objects
 hwaddress.core.EUI_Mixin
 ~~~~~~~~~~~~~~~~~~~~~~~~
 
+hwaddress.EUI_48(address)
+~~~~~~~~~~~~~~~~
+
+hwaddress.EUI_64(address)
+~~~~~~~~~~~~~~~~
+
 
 WWN Address objects
 -------------------
@@ -157,7 +170,22 @@ WWN Address objects
 hwaddress.core.WWN_Mixin
 ~~~~~~~~~~~~~~~~~~~~~~~~
 
+hwaddress.WWN(address)
+~~~~~~~~~~~~~
+
+hwaddress.WWNx(address)
+~~~~~~~~~~~~~~
+
 
 IB Address objects
 -------------------
+
+hwaddress.IB_LID(address)
+~~~~~~~~~~~~~~~~
+
+hwaddress.IB_GUID(address)
+~~~~~~~~~~~~~~~~~
+
+hwaddress.IB_GID(address)
+~~~~~~~~~~~~~~~~
 

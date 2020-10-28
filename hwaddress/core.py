@@ -1,7 +1,7 @@
-"""Lightweight EUI-48, EUI-64 based hardware address library."""
+"""Lightweight EUI-48, EUI-64 based hardware (MAC) address library."""
 
 
-class Base_HWA():
+class MAC():
     """Base class for Hardware Addresses.
 
     Represent a single Hardware Address.
@@ -12,7 +12,7 @@ class Base_HWA():
 
     _len_ = 48      # length of address in bits. multiple of 4
     _grp_ = 2       # default group size of hex digits, (1, 2, 3, 4)
-    _del_ = '-'     # default delimiter, ('-', ':', '.', ' ', '')
+    _del_ = ':'     # default delimiter, ('-', ':', '.', ' ', '')
     _upper_ = False
 
     def __init__(self, address):
@@ -175,30 +175,31 @@ class EUI_Mixin():
     @property
     def oui(self):
 
-        obj = type('OUI', (Base_HWA,), dict(_len_=24))
+        obj = type('OUI', (MAC,), dict(_len_=24))
         return obj(''.join(self[:6]))
 
     @property
     def cid(self):
 
-        obj = type('CID', (Base_HWA,), dict(_len_=24))
+        obj = type('CID', (MAC,), dict(_len_=24))
         return obj(''.join(self[:6]))
 
     @property
     def oui36(self):
 
-        obj = type('OUI36', (Base_HWA,), dict(_len_=36))
+        obj = type('OUI36', (MAC,), dict(_len_=36))
         return obj(''.join(self[:9]))
 
 
-class EUI_48(Base_HWA, EUI_Mixin):
+class EUI_48(MAC, EUI_Mixin):
 
-    _len_ = 48
+    _del_ = '-'
 
 
-class EUI_64(Base_HWA, EUI_Mixin):
+class EUI_64(MAC, EUI_Mixin):
 
     _len_ = 64
+    _del_ = '-'
 
 
 class WWN_Mixin():
@@ -211,7 +212,7 @@ class WWN_Mixin():
     @property
     def oui(self):
 
-        obj = type('OUI', (Base_HWA,), dict(_len_=24))
+        obj = type('OUI', (MAC,), dict(_len_=24))
 
         if self.naa in ('1', '2'):
             return obj(''.join(self[4:10]))
@@ -221,10 +222,9 @@ class WWN_Mixin():
             raise RuntimeError('WWN(x) NAA must be 1, 2, 5, or 6')
 
 
-class WWN(Base_HWA, WWN_Mixin):
+class WWN(MAC, WWN_Mixin):
 
     _len_ = 64
-    _del_ = ':'
 
     def __init__(self, address):
 
@@ -233,7 +233,7 @@ class WWN(Base_HWA, WWN_Mixin):
             raise ValueError('First hex digit for WWN must be 1, 2, or 5')
 
 
-class WWNx(Base_HWA, WWN_Mixin):
+class WWNx(MAC, WWN_Mixin):
 
     _len_ = 128
 
@@ -244,7 +244,7 @@ class WWNx(Base_HWA, WWN_Mixin):
             raise ValueError('First hex digit for WWNx must be 6')
 
 
-class IB_LID(Base_HWA):
+class IB_LID(MAC):
 
     _len_ = 16
     _del_ = ''
@@ -258,7 +258,7 @@ class IB_GUID(EUI_64):
     _grp_ = 4
 
 
-class IB_GID(Base_HWA):
+class IB_GID(MAC):
 
     _len_ = 128
     _del_ = ':'
@@ -271,7 +271,7 @@ class IB_GID(Base_HWA):
                     _del_=':',
                     _grp_=4)
 
-        obj = type('IB_GID_prefix', (Base_HWA,), prop)
+        obj = type('IB_GID_prefix', (MAC,), prop)
         return obj(''.join(self[:16]))
 
     @property

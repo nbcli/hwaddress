@@ -8,7 +8,7 @@ setuptools.setup(
     version='0.0.1',
     author="Eric Geldmacher",
     author_email="egeldmacher@wustl.edu",
-    description="Lightweight EUI-48, EUI-64 based hardware address library.",
+    description="Lightweight EUI-48/64 based hardware (MAC) address library.",
     long_description=long_description,
     url="https://github.com/ericgeldmacher/hwaddress",
     license="MIT",
