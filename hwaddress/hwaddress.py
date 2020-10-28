@@ -1,18 +1,14 @@
 """Lightweight EUI-48, EUI-64 based hardware address library."""
 
 
-class _HW_Opts_:
-    """Define available options for Base_HWA class and sub-classes."""
-
-    grp_opts = range(1, 5)
-    del_opts = ('-', ':', '.', ' ', '')
-
-
 class Base_HWA():
     """Base class for Hardware Addresses.
 
     Represent a single Hardware Address.
     """
+
+    _grp_opts_ = (1, 2, 4)
+    _del_opts_ = ('-', ':', '.', ' ', '')
 
     _len_ = 48      # length of address in bits. multiple of 4
     _grp_ = 2       # default group size of hex digits, (1, 2, 3, 4)
@@ -42,13 +38,11 @@ class Base_HWA():
             raise AttributeError(f'{self._len_} is not divisible by 4')
 
         # check that self._grp_ is in (1, 2, 4)
-        grp_opts = _HW_Opts_.grp_opts
-        if self._grp_ not in grp_opts:
+        if self._grp_ not in self._grp_opts_:
             raise AttributeError(f'group must be in {grp_opts}')
 
         # check that self._del_ is in ('-', ':', '.', ' ', '')
-        del_opts = _HW_Opts_.del_opts
-        if self._del_ not in del_opts:
+        if self._del_ not in self._del_opts_:
             raise AttributeError(f'{self._del_} not in {del_opts}')
 
         # check that self._upper_ is True or False
@@ -69,15 +63,13 @@ class Base_HWA():
 
         hws = string.lower()
 
-        stripchar = list(_HW_Opts_.del_opts) + ["0x"]
+        stripchar = list(self._del_opts_) + ["0x"]
         for char in stripchar:
             hws = hws.replace(char, "")
 
         if len(hws) != int(self._len_ / 4):
             raise ValueError
 
-        if self._upper_:
-            hws = hws.upper()
 
         try:
             int(hws, 16)
@@ -102,20 +94,28 @@ class Base_HWA():
 
         return self.int < other.int
 
+    def __eq__(self, other):
+
+        return self.__class__ == other.__class__ and self.int == other.int
+
+    def __hash__(self):
+
+        return hash(f'{self.__class__}{self._digits_}')
+
     def __repr__(self):
 
         return f'{self.__class__.__name__}({str(self)})'
 
     def __str__(self):
 
-        if self._del_ == '':
-            return self.hex
-
         grp = self._grp_
-        cnt = len(self)
-        parts = [''.join(self[i:i+grp]) for i in range(0, cnt, grp)]
-
-        return self._del_.join(parts)
+        parts = [''.join(self[i:i+grp]) for i in range(0, len(self), grp)]
+        string = self._del_.join(parts) 
+        if self._upper_:
+            string = string.upper()
+        if self._del_ == '':
+            return f'0x{string}'
+        return string
 
     @property
     def int(self):

@@ -1,6 +1,6 @@
 import setuptools
 
-with open("README.md", "r") as fh:
+with open("README.rst", "r") as fh:
     long_description = fh.read()
 
 setuptools.setup(
@@ -10,10 +10,9 @@ setuptools.setup(
     author_email="egeldmacher@wustl.edu",
     description="Lightweight EUI-48, EUI-64 based hardware address library.",
     long_description=long_description,
-    long_description_content_type="text/markdown",
     url="https://github.com/ericgeldmacher/hwaddress",
     license="MIT",
-    packages=setuptools.find_packages(),
+    packages=['hwaddress'],
     classifiers=[
         "Programming Language :: Python :: 3",
         "License :: OSI Approved :: MIT License",
