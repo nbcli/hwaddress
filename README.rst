@@ -4,7 +4,7 @@ hwaddress
 
 A lightweight EUI-48, EUI-64 based hardware address library.
 
-.. contests::
+.. contents::
     :local:
 
 
@@ -64,3 +64,43 @@ Return an IB_LID, IB_GUID, or IB_GID object depending on the address passed as a
     IB_GID(1234:5678:90ab:cdef:1234:5678:90ab:cdef)
     >>> ib_address(24197857200151252728969465429440056815)
     IB_GID(1234:5678:90ab:cdef:1234:5678:90ab:cdef)
+
+
+Base Hardware Address object
+----------------------------
+
+hwaddress.core.Base_HWA
+~~~~~~~~~~~~~~~~~~~~~~~
+
+Methods
++++++++
+
+* format(delimiter=None, group=None, upper=None)
+
+    Format address with given formatting options.
+
+    If an option is not specified,
+    the option defined by the class will be used
+
+    Args:
+        delimiter (str): character separating hex digits.
+        group (int): how many hex digits in each group.
+        upper (bool): True for uppercase, False for lowercase.
+    
+
+Properties
++++++++++
+
+* int (Integer representation of address.)
+* hex (Hexadecimal representation of address.)
+* bin (Binary representation of address.)
+* binary (Padded binary representation of each hex digit in address.)
+
+
+hwaddress.core.EUI_Mixin
+~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+hwaddress.core.WWN_Mixin
+~~~~~~~~~~~~~~~~~~~~~~~~
+

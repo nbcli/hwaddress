@@ -119,22 +119,22 @@ class Base_HWA():
 
     @property
     def int(self):
-        """Integer representation of this address."""
+        """Integer representation of address."""
         return int(self.hex, 16)
 
     @property
     def hex(self):
-        """Hexadecimal representation of this address."""
+        """Hexadecimal representation of address."""
         return f'0x{"".join(self)}'
 
     @property
     def bin(self):
-        """Binary representation of this address."""
+        """Binary representation of address."""
         return bin(self.int)
 
     @property
     def binary(self):
-        """Binary representation of each hex digit in this address.
+        """Padded binary representation of each hex digit in address.
 
         Binary groups are padded with '0's to be 4 bits long,
         and are separated with a space to improve readability.
