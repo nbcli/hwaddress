@@ -343,7 +343,7 @@ class IB_GID(MAC):
         return IB_GUID(''.join(self[16:]))
 
 
-def hw_address(address, objs=(MAC, MAC_64, GUID)):
+def _address_factory_(address, objs=()):
     """Return hwaddress object for address.."""
     for obj in objs:
         try:
@@ -352,3 +352,16 @@ def hw_address(address, objs=(MAC, MAC_64, GUID)):
             pass
 
     raise ValueError(f'{address} does not seem to be any of {objs}.')
+
+def get_address_factory(*args):
+    """Return address factory with given hwaddress objects."""
+    from functools import partial
+
+    if args:
+        for arg in args:
+            if not issubclass(arg, MAC):
+                raise TypeError("args must be 'MAC' or subclass of 'MAC'.")
+    else:
+        args = (MAC, MAC_64, GUID)
+
+    return partial(_address_factory_, objs=args)

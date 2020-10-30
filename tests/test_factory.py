@@ -5,12 +5,13 @@ from random import choice, choices, getrandbits, randint
 from string import hexdigits
 import unittest
 from hwaddress import MAC, MAC_64, GUID, EUI_48, EUI_64, WWN, WWNx, \
-                      IB_LID, IB_GUID, IB_GID, hw_address
+                      IB_LID, IB_GUID, IB_GID, get_address_factory
 
 # create factories for eui, wwn, and ib
-eui_address = partial(hw_address, objs=(EUI_48, EUI_64))
-wwn_address = partial(hw_address, objs=(WWN, WWNx))
-ib_address = partial(hw_address, objs=(IB_LID, IB_GUID, IB_GID))
+hw_address = get_address_factory()
+eui_address = get_address_factory(EUI_48, EUI_64)
+wwn_address = get_address_factory(WWN, WWNx)
+ib_address = get_address_factory(IB_LID, IB_GUID, IB_GID)
 
 # Max int that can be held in bit length
 B16 = 65535

@@ -8,25 +8,27 @@ Lightweight python library for EUI-48, EUI-64 based hardware (MAC) addresses.
     :local:
 
 
-Factory Functions
------------------
-
-hwaddress.hw_address(address, objs=(MAC, MAC_64, GUID))
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+hwaddress.get_address_factory(*args)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Return a hwaddress object from objs tuple
 depending on the address passed as an argument.
 
 .. code:: python
 
+    >>> from hwaddress import get_address_factory, EUI_48, EUI_64
+    >>> hw_address = get_address_factory()
+    >>>
     >>> hw_address('12:34:56:78:90:ab')
     MAC(12:34:56:78:90:ab)
     >>> hw_address(20015998341291)
     MAC(12:34:56:78:90:ab)
     >>> hw_address('12:34:56:78:90:ab:cd:ef')
     MAC_64(12:34:56:78:90:ab:cd:ef)
-    >>> eui_address(1311768467294899695)
+    >>> hw_address(1311768467294899695)
     MAC_64(12:34:56:78:90:ab:cd:ef)
+    >>>
+    >>> eui_address = get_address_factory(EUI_48, EUI_64)
 
 
 Base Hardware Address objects
