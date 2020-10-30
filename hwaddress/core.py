@@ -2,9 +2,9 @@
 
 
 class MAC():
-    """Base class for Hardware Addresses.
+    """Generic 48 bit MAC address object.
 
-    Represent a single Hardware Address.
+    Base object for other hardware address objects..
     """
 
     _del_opts_ = ('-', ':', '.', ' ', '')
@@ -36,7 +36,7 @@ class MAC():
         if (not isinstance(self._len_, int)) or (self._len_ % 4 != 0):
             raise AttributeError(f'length must be an int divisible by 4')
 
-        # check that self._grp_ is in (1, 2, 4)
+        # check that self._grp_ is an int or tuple
         if not isinstance(self._grp_, (int, tuple)):
             raise AttributeError(f'group must be an int or tuple.')
 
@@ -53,11 +53,11 @@ class MAC():
             self._proc_string_(address)
         else:
             raise TypeError("'address' must be an integer or string.")
-            
+
         self._restrict_()
 
     def _proc_string_(self, string):
-
+        """Extract hex digits from string and add self._digits_."""
         hws = string.lower()
 
         stripchar = list(self._del_opts_) + ["0x"]
@@ -67,7 +67,6 @@ class MAC():
         if len(hws) != int(self._len_ / 4):
             raise ValueError
 
-
         try:
             int(hws, 16)
         except ValueError:
@@ -76,39 +75,39 @@ class MAC():
         self._digits_ = tuple(hws)
 
     def _restrict_(self):
-
+        """Raise error if restrictions are not met."""
         pass
 
     def __iter__(self):
-
+        """Pass calls to __iter__ to self.digits."""
         return self._digits_.__iter__()
 
     def __getitem__(self, item):
-
+        """Pass calls to __getitem__ to self.digits."""
         return self._digits_[item]
 
     def __len__(self):
-
+        """Pass calls to __len__ to self.digits."""
         return len(self._digits_)
 
     def __lt__(self, other):
-
+        """Sort based on self.int."""
         return self.int < other.int
 
     def __eq__(self, other):
-
+        """Equity based on self.int."""
         return self.__class__ == other.__class__ and self.int == other.int
 
     def __hash__(self):
-
+        """Make hashable."""
         return hash(f'{self.__class__}{self._digits_}')
 
     def __repr__(self):
-
+        """Repr based on class name and __str__."""
         return f'{self.__class__.__name__}({str(self)})'
 
     def __str__(self):
-
+        """Create string based on delimiter, group, and upper."""
         grp = self._grp_
 
         if isinstance(grp, int):
@@ -120,7 +119,7 @@ class MAC():
                 parts.append(''.join(self[s:s+i]))
                 s += i
 
-        string = self._del_.join(parts) 
+        string = self._del_.join(parts)
 
         if self._upper_:
             string = string.upper()
@@ -147,7 +146,7 @@ class MAC():
 
     @property
     def binary(self):
-        """Padded binary representation of each hex digit in address.
+        """Binary representation of each hex digit in address.
 
         Binary groups are padded with '0's to be 4 bits long,
         and are separated with a space to improve readability.
@@ -182,20 +181,53 @@ class MAC():
 
         return str(obj)
 
+    @classmethod
+    def verify(cls, address):
+        """Verify that address conforms to formatting defined by class."""
+        if not isinstance(address, str):
+            raise TypeError('address must be a srting.')
+
+        if cls._del_ != '':
+            grps = address.split(cls._del_)
+            if isinstance(cls._grp_, tuple):
+                if cls._grp_ != tuple(len(g) for g in grps):
+                    return False
+            if isinstance(cls._grp_, int):
+                for g in grps:
+                    if len(g) != cls._grp_:
+                        return False
+
+        else:
+            if not address.startswith('0x'):
+                return False
+            address = address[2:]
+            if (len(address) * 4) != cls._len_:
+                return False
+
+        try:
+            cls(address)
+        except Exception:
+            return False
+
+        return True
+
 
 class MAC_64(MAC):
+    """Generic 64 bit MAC address object."""
 
     _len_ = 64
 
 
 class GUID(MAC):
+    """Generic 128 bit GUID/UUID address object with 8-4-4-4-12 grouping."""
 
     _len_ = 128
     _grp_ = (8, 4, 4, 4, 12)
     _del_ = '-'
 
 
-class EUI_Mixin():
+class _EUI_Mixin_():
+    """Define properties for EUI objects."""
 
     @property
     def oui(self):
@@ -216,18 +248,21 @@ class EUI_Mixin():
         return obj(''.join(self[:9]))
 
 
-class EUI_48(MAC, EUI_Mixin):
+class EUI_48(MAC, _EUI_Mixin_):
+    """Represent single EUI-48 object."""
 
     _del_ = '-'
 
 
-class EUI_64(MAC, EUI_Mixin):
+class EUI_64(MAC, _EUI_Mixin_):
+    """Represent single EUI-64 object."""
 
     _len_ = 64
     _del_ = '-'
 
 
-class WWN_Mixin():
+class _WWN_Mixin_():
+    """Define properties for WWN objects."""
 
     @property
     def naa(self):
@@ -247,7 +282,8 @@ class WWN_Mixin():
             raise RuntimeError('WWN(x) NAA must be 1, 2, 5, or 6')
 
 
-class WWN(MAC, WWN_Mixin):
+class WWN(MAC, _WWN_Mixin_):
+    """Represent single WWN object."""
 
     _len_ = 64
 
@@ -257,7 +293,8 @@ class WWN(MAC, WWN_Mixin):
             raise ValueError('First hex digit for WWN must be 1, 2, or 5')
 
 
-class WWNx(MAC, WWN_Mixin):
+class WWNx(MAC, _WWN_Mixin_):
+    """Represent single 128 bit extended WWN object."""
 
     _len_ = 128
 
@@ -268,6 +305,7 @@ class WWNx(MAC, WWN_Mixin):
 
 
 class IB_LID(MAC):
+    """Represent single 16 bit Infiniband LID object."""
 
     _len_ = 16
     _del_ = ''
@@ -275,6 +313,7 @@ class IB_LID(MAC):
 
 
 class IB_GUID(EUI_64):
+    """Represent single 64 bit Infiniband GUID object."""
 
     _len_ = 64
     _del_ = ':'
@@ -282,6 +321,7 @@ class IB_GUID(EUI_64):
 
 
 class IB_GID(MAC):
+    """Represent single 128 bit Infiniband GID object."""
 
     _len_ = 128
     _del_ = ':'
@@ -289,7 +329,7 @@ class IB_GID(MAC):
 
     @property
     def prefix(self):
-
+        """Return embedded 64 bit Infiniband GID prefix."""
         prop = dict(_len_=64,
                     _del_=':',
                     _grp_=4)
@@ -299,12 +339,12 @@ class IB_GID(MAC):
 
     @property
     def guid(self):
-
+        """Return embedded 64 bit Infiniband GUID."""
         return IB_GUID(''.join(self[16:]))
 
 
 def hw_address(address, objs=(MAC, MAC_64, GUID)):
-
+    """Return hwaddress object for address.."""
     for obj in objs:
         try:
             return obj(address)
