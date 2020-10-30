@@ -11,26 +11,26 @@ Lightweight python library for EUI-48, EUI-64 based hardware (MAC) addresses.
 Factory Functions
 -----------------
 
-hwaddress.hw_address(address)
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+hwaddress.hw_address(address, objs=(MAC, MAC_64, GUID))
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Return an EUI_48 or EUI_64 object depending
-on the address passed as an argument.
+Return a hwaddress object from objs tuple
+depending on the address passed as an argument.
 
 .. code:: python
 
-    >>> eui_address('12:34:56:78:90:ab')
-    EUI_48(12-34-56-78-90-ab)
-    >>> eui_address(20015998341291)
-    EUI_48(12-34-56-78-90-ab)
-    >>> eui_address('12:34:56:78:90:ab:cd:ef')
-    EUI_64(12-34-56-78-90-ab-cd-ef)
+    >>> hw_address('12:34:56:78:90:ab')
+    MAC(12:34:56:78:90:ab)
+    >>> hw_address(20015998341291)
+    MAC(12:34:56:78:90:ab)
+    >>> hw_address('12:34:56:78:90:ab:cd:ef')
+    MAC_64(12:34:56:78:90:ab:cd:ef)
     >>> eui_address(1311768467294899695)
-    EUI_64(12-34-56-78-90-ab-cd-ef)
+    MAC_64(12:34:56:78:90:ab:cd:ef)
 
 
 Base Hardware Address objects
------------------------------33333333333
+-----------------------------
 
 hwaddress.MAC(address)
 ~~~~~~~~~~~~~~~~~~~~~~
@@ -75,6 +75,27 @@ Methods
         >>> mac.format('.', 4, True)
         '1234.5678.90AB'
 
+
+Classmethods
+++++++++++++
+
+* verify(address)
+
+    ::
+
+        Verify that address conforms fo formatting defined by class.
+
+    .. code:: python
+
+        >>> from hwaddress import EUI_48, GUID
+        >>> EUI_48.verify('12:34:56:78:90:ab')
+        False
+        >>> EUI_48.verify('12-34-56-78-90-ab')
+        True
+        >>> GUID.verify('1234:5678:90ab:cdef:1234:5678:90ab:cdef')
+        False
+        >>> GUID.verify('12345678-90ab-cdef-1234-567890abcdef')
+        True
 
 Properties
 ++++++++++
