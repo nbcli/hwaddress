@@ -9,7 +9,7 @@ Lightweight python library for EUI-48, EUI-64 based hardware (MAC) addresses.
 
 
 hwaddress.get_address_factory(*args)
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+------------------------------------
 
 Return a hwaddress object from objs tuple
 depending on the address passed as an argument.
