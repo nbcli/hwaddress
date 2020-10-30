@@ -7,7 +7,6 @@ class MAC():
     Represent a single Hardware Address.
     """
 
-    _grp_opts_ = (1, 2, 4)
     _del_opts_ = ('-', ':', '.', ' ', '')
 
     _len_ = 48      # length of address in bits. multiple of 4
@@ -34,16 +33,12 @@ class MAC():
             ValueError if address is int and can not fit in self._len_ bits.
         """
         # check that self._len_ is evenly divisible by 4
-        if self._len_ % 4 != 0:
-            raise AttributeError(f'{self._len_} is not divisible by 4')
+        if (not isinstance(self._len_, int)) or (self._len_ % 4 != 0):
+            raise AttributeError(f'length must be an int divisible by 4')
 
         # check that self._grp_ is in (1, 2, 4)
-        if self._grp_ not in self._grp_opts_:
-            raise AttributeError(f'group must be in {grp_opts}')
-
-        # check that self._del_ is in ('-', ':', '.', ' ', '')
-        if self._del_ not in self._del_opts_:
-            raise AttributeError(f'{self._del_} not in {del_opts}')
+        if not isinstance(self._grp_, (int, tuple)):
+            raise AttributeError(f'group must be an int or tuple.')
 
         # check that self._upper_ is True or False
         if self._upper_ not in (True, False):
@@ -58,6 +53,8 @@ class MAC():
             self._proc_string_(address)
         else:
             raise TypeError("'address' must be an integer or string.")
+            
+        self._restrict_()
 
     def _proc_string_(self, string):
 
@@ -77,6 +74,10 @@ class MAC():
             raise ValueError(f"'{string}' contains non hexadecimal digits.")
 
         self._digits_ = tuple(hws)
+
+    def _restrict_(self):
+
+        pass
 
     def __iter__(self):
 
@@ -109,12 +110,24 @@ class MAC():
     def __str__(self):
 
         grp = self._grp_
-        parts = [''.join(self[i:i+grp]) for i in range(0, len(self), grp)]
+
+        if isinstance(grp, int):
+            parts = [''.join(self[i:i+grp]) for i in range(0, len(self), grp)]
+        elif isinstance(grp, tuple):
+            parts = []
+            s = 0
+            for i in grp:
+                parts.append(''.join(self[s:s+i]))
+                s += i
+
         string = self._del_.join(parts) 
+
         if self._upper_:
             string = string.upper()
+
         if self._del_ == '':
             return f'0x{string}'
+
         return string
 
     @property
@@ -168,6 +181,18 @@ class MAC():
         obj = type('_', (self.__class__,), prop)(self.hex)
 
         return str(obj)
+
+
+class MAC_64(MAC):
+
+    _len_ = 64
+
+
+class GUID(MAC):
+
+    _len_ = 128
+    _grp_ = (8, 4, 4, 4, 12)
+    _del_ = '-'
 
 
 class EUI_Mixin():
@@ -226,9 +251,8 @@ class WWN(MAC, WWN_Mixin):
 
     _len_ = 64
 
-    def __init__(self, address):
+    def _restrict_(self):
 
-        super().__init__(address)
         if self[0] not in ('1', '2', '5'):
             raise ValueError('First hex digit for WWN must be 1, 2, or 5')
 
@@ -237,9 +261,8 @@ class WWNx(MAC, WWN_Mixin):
 
     _len_ = 128
 
-    def __init__(self, address):
+    def _restrict_(self):
 
-        super().__init__(address)
         if self[0] != '6':
             raise ValueError('First hex digit for WWNx must be 6')
 
@@ -280,51 +303,12 @@ class IB_GID(MAC):
         return IB_GUID(''.join(self[16:]))
 
 
-def eui_address(address):
+def hw_address(address, objs=(MAC, MAC_64, GUID)):
 
-    try:
-        return EUI_48(address)
-    except (TypeError, ValueError):
-        pass
+    for obj in objs:
+        try:
+            return obj(address)
+        except (TypeError, ValueError):
+            pass
 
-    try:
-        return EUI_64(address)
-    except (TypeError, ValueError):
-        pass
-
-    raise ValueError(f'{address} is not a EUI-48 or EUI-64 ID.')
-
-
-def wwn_address(address):
-
-    try:
-        return WWN(address)
-    except (TypeError, ValueError):
-        pass
-
-    try:
-        return WWNx(address)
-    except (TypeError, ValueError):
-        pass
-
-    raise ValueError(f'{address} is not a WWN ID.')
-
-
-def ib_address(address):
-
-    try:
-        return IB_LID(address)
-    except (TypeError, ValueError):
-        pass
-
-    try:
-        return IB_GUID(address)
-    except (TypeError, ValueError):
-        pass
-
-    try:
-        return IB_GID(address)
-    except (TypeError, ValueError):
-        pass
-
-    raise ValueError(f'{address} is not an IB LID, GUID, or GID.')
+    raise ValueError(f'{address} does not seem to be any of {objs}.')

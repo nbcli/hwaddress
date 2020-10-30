@@ -2,7 +2,7 @@
 hwaddress
 =========
 
-A lightweight EUI-48, EUI-64 based hardware (MAC) address library.
+Lightweight python library for EUI-48, EUI-64 based hardware (MAC) addresses. 
 
 .. contents::
     :local:
@@ -11,7 +11,7 @@ A lightweight EUI-48, EUI-64 based hardware (MAC) address library.
 Factory Functions
 -----------------
 
-hwaddress.eui_address(address)
+hwaddress.hw_address(address)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Return an EUI_48 or EUI_64 object depending
@@ -29,47 +29,8 @@ on the address passed as an argument.
     EUI_64(12-34-56-78-90-ab-cd-ef)
 
 
-hwaddress.wwn_address(address)
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-Return a WWN or WWNx object depending on the address passed as an argument.
-
-.. code:: python
-
-    >>> wwn_address('20:12:34:56:78:90:ab:cd')
-    WWN(20:12:34:56:78:90:ab:cd)
-    >>> wwn_address(2310967104789064653)
-    WWN(20:12:34:56:78:90:ab:cd)
-    >>> wwn_address('60:12:34:56:78:90:ab:cd:12:34:56:78:90:ab:cd:ef')
-    WWNx(60:12:34:56:78:90:ab:cd:12:34:56:78:90:ab:cd:ef)
-    >>> wwn_address(127700410475040014613822894157901581807)
-    WWNx(60:12:34:56:78:90:ab:cd:12:34:56:78:90:ab:cd:ef)
-
-
-hwaddress.ib_address(address)
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-Return an IB_LID, IB_GUID, or IB_GID object depending
-on the address passed as an argument.
-
-.. code:: python
-
-    >>> ib_address('00af')
-    IB_LID(0x00af)
-    >>> ib_address(175)
-    IB_LID(0x00af)
-    >>> ib_address('12:34:56:78:90:ab:cd:ef')
-    IB_GUID(1234:5678:90ab:cdef)
-    >>> ib_address(1311768467294899695)
-    IB_GUID(1234:5678:90ab:cdef)
-    >>> ib_address('12:34:56:78:90:ab:cd:ef:12:34:56:78:90:ab:cd:ef')
-    IB_GID(1234:5678:90ab:cdef:1234:5678:90ab:cdef)
-    >>> ib_address(24197857200151252728969465429440056815)
-    IB_GID(1234:5678:90ab:cdef:1234:5678:90ab:cdef)
-
-
-Base Hardware Address object
-----------------------------
+Base Hardware Address objects
+-----------------------------33333333333
 
 hwaddress.MAC(address)
 ~~~~~~~~~~~~~~~~~~~~~~
@@ -133,7 +94,11 @@ Properties
 
 * hex
 
-    Hexadecimal representation of address.
+    ::
+
+        Hexadecimal representation of address.
+
+        Returns: str
 
     .. code:: python
 
@@ -142,7 +107,11 @@ Properties
 
 * bin
 
-    Binary representation of address.
+    ::
+
+        Binary representation of address.
+
+        Returns: str
 
     .. code:: python
 
@@ -151,7 +120,11 @@ Properties
 
 * binary
 
-    Padded binary representation of each hex digit in address.
+    ::
+
+        Padded binary representation of each hex digit in address.
+
+        Returns: str
 
     .. code:: python
 

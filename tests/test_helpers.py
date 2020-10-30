@@ -1,11 +1,15 @@
 """unittests for hwaddresses helper functions."""
 
-import unittest
+from functools import partial
 from random import choice, choices, getrandbits, randint
 from string import hexdigits
+import unittest
 from hwaddress import EUI_48, EUI_64, WWN, WWNx, \
-                      IB_LID, IB_GUID, IB_GID, \
-                      eui_address, wwn_address, ib_address
+                      IB_LID, IB_GUID, IB_GID, hw_address
+
+eui_address = partial(hw_address, objs=(EUI_48, EUI_64))
+wwn_address = partial(hw_address, objs=(WWN, WWNx))
+ib_address = partial(hw_address, objs=(IB_LID, IB_GUID, IB_GID))
 
 # Max int that can be held in bit length
 B16 = 65535
