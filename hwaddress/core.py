@@ -343,20 +343,8 @@ class IB_GID(MAC):
         return IB_GUID(''.join(self[16:]))
 
 
-def _address_factory_(address, objs=()):
-    """Return hwaddress object for address.."""
-    for obj in objs:
-        try:
-            return obj(address)
-        except (TypeError, ValueError):
-            pass
-
-    raise ValueError(f'{address} does not seem to be any of {objs}.')
-
 def get_address_factory(*args):
     """Return address factory with given hwaddress objects."""
-    from functools import partial
-
     if args:
         for arg in args:
             if not issubclass(arg, MAC):
@@ -364,4 +352,33 @@ def get_address_factory(*args):
     else:
         args = (MAC, MAC_64, GUID)
 
-    return partial(_address_factory_, objs=args)
+    def address_factory(address):
+        """Return hwaddress object for address."""
+        for obj in args:
+            try:
+                return obj(address)
+            except (TypeError, ValueError):
+                pass
+
+        raise ValueError(f'{address} does not seem to be any of {objs}.')
+
+    return address_factory
+
+
+def get_verifier(*args):
+    """Return address verifier with given hwaddress objects."""
+    if args:
+        for arg in args:
+            if not issubclass(arg, MAC):
+                raise TypeError("args must be 'MAC' or subclass of 'MAC'.")
+    else:
+        args = (MAC, MAC_64, EUI_48, EUI_64)
+
+    def verifier(address):
+        """Return True if address will verify.."""
+        for obj in args:
+            if obj.verify(address):
+                return True
+        return False
+
+    return verifier

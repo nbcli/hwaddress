@@ -1,6 +1,5 @@
 """unittests for hwaddresses factory functions."""
 
-from functools import partial
 from random import choice, choices, getrandbits, randint
 from string import hexdigits
 import unittest
