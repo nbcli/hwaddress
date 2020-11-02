@@ -8,8 +8,11 @@ Lightweight python library for EUI-48, EUI-64 based hardware (MAC) addresses.
     :local:
 
 
-hwaddress.get_address_factory(*args)
-------------------------------------
+Factory Functions
+-----------------
+
+hwaddress.get_address_factory(\*args)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Return a hwaddress object from objs tuple
 depending on the address passed as an argument.
@@ -31,28 +34,18 @@ depending on the address passed as an argument.
     >>> eui_address = get_address_factory(EUI_48, EUI_64)
 
 
-Base Hardware Address objects
------------------------------
+hwaddress.get_verifier(\*args)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-hwaddress.MAC(address)
-~~~~~~~~~~~~~~~~~~~~~~
 
-::
+Common Methods/Classmethos/Properties
+-------------------------------------
 
-    bit-length: 48
-    delimiter: ':'
-    grouping: 2
-
-.. code:: python 
-
-    >>> mac = MAC('12:34:56:78:90:ab')
-    >>> mac
-    mac(12:34:56:78:90:ab)
-    >>> str(mac)
-    '12:34:56:78:90:ab'
+**All classes inheriting from `MAC` will have the following
+methods, classmethos, and properties**.
 
 Methods
-+++++++
+~~~~~~~
 
 * format(delimiter=None, group=None, upper=None)
 
@@ -79,7 +72,7 @@ Methods
 
 
 Classmethods
-++++++++++++
+~~~~~~~~~~~~
 
 * verify(address)
 
@@ -100,7 +93,7 @@ Classmethods
         True
 
 Properties
-++++++++++
+~~~~~~~~~~
 
 * int
 
@@ -154,22 +147,46 @@ Properties
         >>> mac.binary
         '0001 0010 0011 0100 0101 0110 0111 1000 1001 0000 1010 1011'
 
+Base Hardware Address objects
+-----------------------------
+
+hwaddress.MAC(address)
+~~~~~~~~~~~~~~~~~~~~~~
+
+::
+
+    bit-length: 48
+    delimiter: ':'
+    grouping: 2
+
+.. code:: python 
+
+    >>> mac = MAC('12:34:56:78:90:ab')
+    >>> mac
+    mac(12:34:56:78:90:ab)
+    >>> str(mac)
+    '12:34:56:78:90:ab'
+
+hwaddress.MAC_64(address)
+~~~~~~~~~~~~~~~~~~~~~~~~~
+
+hwaddress.GUID(address)
+~~~~~~~~~~~~~~~~~~~~~~~
+
 
 EUI Address objects
 -------------------
 
-hwaddress.core.EUI_Mixin
-~~~~~~~~~~~~~~~~~~~~~~~~
-
-Properties
-++++++++++
+Common EUI Properties
+~~~~~~~~~~~~~~~~~~~~~
 
 * oui
 * cid
 * oui36
 
+
 hwaddress.EUI_48(address)
-~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Inherits from: MAC, EUI_Mixin
 
@@ -180,7 +197,7 @@ Inherits from: MAC, EUI_Mixin
     grouping: 2
 
 hwaddress.EUI_64(address)
-~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Inherits from: MAC, EUI_Mixin
 
@@ -194,17 +211,15 @@ Inherits from: MAC, EUI_Mixin
 WWN Address objects
 -------------------
 
-hwaddress.core.WWN_Mixin
-~~~~~~~~~~~~~~~~~~~~~~~~
-
-Properties
-++++++++++
+Common WWN Properties
+~~~~~~~~~~~~~~~~~~~~~
 
 * naa
 * oui
 
+
 hwaddress.WWN(address)
-~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~
 
 Inherits from: MAC, WWN_Mixin
 
@@ -215,7 +230,7 @@ Inherits from: MAC, WWN_Mixin
     grouping: 2
 
 hwaddress.WWNx(address)
-~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~
 
 Inherits from: MAC, WWN_Mixin
 
@@ -230,7 +245,7 @@ IB Address objects
 -------------------
 
 hwaddress.IB_LID(address)
-~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Inherits from: MAC
 
@@ -241,7 +256,7 @@ Inherits from: MAC
     grouping: 4
 
 hwaddress.IB_GUID(address)
-~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Inherits from: EUI_64
 
@@ -252,7 +267,7 @@ Inherits from: EUI_64
     grouping: 4
 
 hwaddress.IB_GID(address)
-~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Inherits from: MAC
 
