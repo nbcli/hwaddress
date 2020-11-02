@@ -8,58 +8,10 @@ Lightweight python library for EUI-48, EUI-64 based hardware (MAC) addresses.
     :local:
 
 
-Factory Functions
------------------
+Common Methods/Classmethos/Properties
+-------------------------------------
 
-hwaddress.get_address_factory(\*args)
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-Return a hwaddress object from objs tuple
-depending on the address passed as an argument.
-
-.. code:: python
-
-    >>> from hwaddress import get_address_factory, EUI_48, EUI_64
-    >>> hw_address = get_address_factory()
-    >>>
-    >>> hw_address('12:34:56:78:90:ab')
-    MAC(12:34:56:78:90:ab)
-    >>> hw_address(20015998341291)
-    MAC(12:34:56:78:90:ab)
-    >>> hw_address('12:34:56:78:90:ab:cd:ef')
-    MAC_64(12:34:56:78:90:ab:cd:ef)
-    >>> hw_address(1311768467294899695)
-    MAC_64(12:34:56:78:90:ab:cd:ef)
-    >>>
-    >>> eui_address = get_address_factory(EUI_48, EUI_64)
-
-
-hwaddress.get_verifier(\*args)
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-
-Generic Hardware Address objects
---------------------------------
-
-+--------+------------------------+--------------------------------------+
-| MAC    | | bit-length: 48       | ff:ff:ff:ff:ff:ff                    |
-|        | | delimiter: ':'       |                                      |
-|        | | grouping: 2          |                                      |
-+--------+------------------------+--------------------------------------+
-| MAC_64 | | bit-length: 64       | ff:ff:ff:ff:ff:ff:ff:ff              |
-|        | | delimiter: ':'       |                                      |
-|        | | grouping: 2          |                                      |
-+--------+------------------------+--------------------------------------+
-| GUID   | | bit-length: 128      | ffffffff-ffff-ffff-ffff-ffffffffffff |
-|        | | delimiter: '-'       |                                      |
-|        | | grouping: 8-4-4-4-12 |                                      |
-+--------+------------------------+--------------------------------------+
-
-**Common Methods/Classmethos/Properties**
-
-.. note::
-
-    All classes inheriting from `MAC` will have the following methods, classmethos, and properties.
+**All classes inheriting from MAC will have the following methods, classmethos, and properties.**
 
 +--------------------------+-------------+---------+--------------------------------------------------------------+
 | Name                     | Type        | Returns | Description                                                  |
@@ -79,10 +31,30 @@ Generic Hardware Address objects
 +--------------------------+-------------+---------+--------------------------------------------------------------+
 
 
+Generic Hardware Address objects
+--------------------------------
+
++--------+------------------------+--------------------------------------+
+| MAC    | | bit-length: 48       | ff:ff:ff:ff:ff:ff                    |
+|        | | delimiter: ':'       |                                      |
+|        | | grouping: 2          |                                      |
++--------+------------------------+--------------------------------------+
+| MAC_64 | | bit-length: 64       | ff:ff:ff:ff:ff:ff:ff:ff              |
+|        | | delimiter: ':'       |                                      |
+|        | | grouping: 2          |                                      |
++--------+------------------------+--------------------------------------+
+| GUID   | | bit-length: 128      | ffffffff-ffff-ffff-ffff-ffffffffffff |
+|        | | delimiter: '-'       |                                      |
+|        | | grouping: 8-4-4-4-12 |                                      |
++--------+------------------------+--------------------------------------+
+
+
+MAC, MAC_64, GUID Example usage
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
 .. code:: python
 
     >>> from hwaddress import MAC, MAC_64, GUID
-
 
 .. code:: python
 
@@ -104,7 +76,6 @@ Generic Hardware Address objects
     >>> mac.binary
     '0001 0010 0011 0100 0101 0110 0111 1000 1001 0000 1010 1011'
 
-
 .. code:: python
 
     >>> MAC_64.verify('12:34:56:78:90:ab')
@@ -113,7 +84,6 @@ Generic Hardware Address objects
     True
     >>> MAC_64('0x1234567890abcdef').format(group=4, upper=True)
     '1234:5678:90AB:CDEF'
-
 
 .. code:: python
 
@@ -143,7 +113,8 @@ EUI Address objects
 +--------+------------------------+--------------------------------+
 
 
-**Common EUI Properties**
+Common EUI Properties
+~~~~~~~~~~~~~~~~~~~~~
 
 +------+----------+---------+----------------------------------------+
 | Name | Type     | Returns | Description                            |
@@ -154,6 +125,41 @@ EUI Address objects
 +------+----------+---------+----------------------------------------+
 | cid  | property | str     | Hexadecimal representation of address. |
 +------+----------+---------+----------------------------------------+
+
+
+EUI_48, EUI_64 Example usage
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. code:: python
+
+    >>> from hwaddress import EUI_48, EUI_64
+
+.. code:: python
+
+    >>> EUI_48.verify('12:34:56:78:90:ab')
+    False
+    >>> EUI_48.verify('12-34-56-78-90-ab')
+    True
+    >>> eui = EUI_48('12:34:56:78:90:ab')
+    >>> eui
+    EUI_48(12-34-56-78-90-ab)
+    >>> str(eui)
+    '12-34-56-78-90-ab'
+    >>> eui.oui
+    OUI(12:34:56)
+    >>> eui.cid
+    CID(12:34:56)
+    >>> eui.oui36
+    OUI36(12:34:56:78:9)
+
+.. code:: python
+
+    >>> EUI_64.verify('12-34-56-78-90-ab')
+    False
+    >>> EUI_64.verify('12-34-56-78-90-ab-cd-ef')
+    True
+    >>> EUI_64('ab-cd-56-78-90-ab-cd-ef').oui
+    OUI(ab:cd:56)
 
 
 WWN Address objects
@@ -170,7 +176,8 @@ WWN Address objects
 +------+-------------------+-------------------------------------------------+
 
 
-**Common WWN Properties**
+Common WWN Properties
+~~~~~~~~~~~~~~~~~~~~~
 
 +------+----------+---------+----------------------------------------+
 | Name | Type     | Returns | Description                            |
@@ -179,6 +186,14 @@ WWN Address objects
 +------+----------+---------+----------------------------------------+
 | oui  | property | str     | Hexadecimal representation of address. |
 +------+----------+---------+----------------------------------------+
+
+
+WWN, WWNx Example usage
+~~~~~~~~~~~~~~~~~~~~~~~
+
+.. code:: python
+
+    >>> from hwaddress import WWN, WWNx
 
 
 IB Address objects
@@ -198,7 +213,8 @@ IB Address objects
 |         | | grouping: 4          |                                         |
 +---------+------------------------+-----------------------------------------+
 
-**IB_GID Properties**
+IB_GID Properties
+~~~~~~~~~~~~~~~~~
 
 +--------+----------+---------+----------------------------------------+
 | Name   | Type     | Returns | Description                            |
@@ -207,4 +223,62 @@ IB Address objects
 +--------+----------+---------+----------------------------------------+
 | guid   | property | str     | Hexadecimal representation of address. |
 +--------+----------+---------+----------------------------------------+
+
+
+IB_LID, IB_GUID, IB_GID Example usage
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. code:: python
+
+    >>> from hwaddress import IB_LID, IB_GUID, IB_GID
+
+
+Factory Functions
+-----------------
+
+get_address_factory(\*args)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Return a hwaddress object from objs tuple
+depending on the address passed as an argument.
+
+.. code:: python
+
+    >>> from hwaddress import get_address_factory, EUI_48, EUI_64
+    >>>
+    >>> hw_address = get_address_factory()
+    >>>
+    >>> hw_address('12:34:56:78:90:ab')
+    MAC(12:34:56:78:90:ab)
+    >>> hw_address('12:34:56:78:90:ab:cd:ef')
+    MAC_64(12:34:56:78:90:ab:cd:ef)
+    >>>
+    >>> eui_address = get_address_factory(EUI_48, EUI_64)
+
+
+get_verifier(\*args)
+~~~~~~~~~~~~~~~~~~~~
+
+.. code:: python
+
+    >>> from hwaddress import MAC, EUI_48, get_verifier
+    >>>
+    >>> class MyMAC(MAC):
+    ...     _len_ = 48
+    ...     _del_ = '.'
+    ...     _grp_ = 4
+    ...
+    >>>
+    >>> my_verifier = get_verifier(MAC, EUI_48, MyMAC)
+    >>>
+    >>> my_verifier('12:34:56:78:90:ab')
+    True
+    >>> my_verifier('12-34-56-78-90-ab')
+    True
+    >>> my_verifier('1234.5678.90ab')
+    True
+    >>> my_verifier('12.34.56.78.90.ab')
+    False
+    >>> my_verifier('1234-5678-90ab')
+    False
 
