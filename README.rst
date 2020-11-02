@@ -44,6 +44,25 @@ Common Methods/Classmethos/Properties
 **All classes inheriting from `MAC` will have the following
 methods, classmethos, and properties**.
 
++--------------------------+-------------+---------+--------------------------------------------------------------+
+| Name                     | Type        | Returns |   Description                                                |
++--------------------------+-------------+---------+--------------------------------------------------------------+
+| | format(delimiter=None, | method      | str     | Format address with given formatting options.                |
+| |        group=None,     |             |         |                                                              |
+| |        upper=None)     |             |         | If an option is not specified,                               |
+|                          |             |         | the option defined by the class will be used.                |
++--------------------------+-------------+---------+--------------------------------------------------------------+
+| verify(address)          | classmethod | bool    | Verify that address conforms to formatting defined by class. |
++--------------------------+-------------+---------+--------------------------------------------------------------+
+| int                      | property    | int     | Integer representation of address.                           |
++--------------------------+-------------+---------+--------------------------------------------------------------+
+| hex                      | property    | str     | Hexadecimal representation of address.                       |
++--------------------------+-------------+---------+--------------------------------------------------------------+
+| bin                      | property    | str     | Binary representation of address.                            |
++--------------------------+-------------+---------+--------------------------------------------------------------+
+| binary                   | property    | str     | Padded binary representation of each hex digit in address.   |
++--------------------------+-------------+---------+--------------------------------------------------------------+
+
 Methods
 ~~~~~~~
 
@@ -149,6 +168,22 @@ Properties
 
 Base Hardware Address objects
 -----------------------------
+
++--------+------------------------+--------------------------------+
+| Class  |                        |                                |
++--------+------------------------+--------------------------------+
+| MAC    | | bit-length: 48       | ff:ff:ff:ff:ff:ff              |
+|        | | delimiter: ':'       |                                |
+|        | | grouping: 2          |                                |
++--------+------------------------+--------------------------------+
+| MAC_64 | | bit-length: 48       | ff:ff:ff:ff:ff:ff:ff:ff        |
+|        | | delimiter: ':'       |                                |
+|        | | grouping: 2          |                                |
++--------+------------------------+--------------------------------+
+| GUID   | | bit-length: 128      | ffffffff-ffff-ffff-fffffffffff |
+|        | | delimiter: '-'       |                                |
+|        | | grouping: 8-4-4-4-12 |                                |
++--------+------------------------+--------------------------------+
 
 hwaddress.MAC(address)
 ~~~~~~~~~~~~~~~~~~~~~~
