@@ -38,32 +38,6 @@ hwaddress.get_verifier(\*args)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 
-Common Methods/Classmethos/Properties
--------------------------------------
-
-**All classes inheriting from `MAC` will have the following
-methods, classmethos, and properties**.
-
-+--------------------------+-------------+---------+--------------------------------------------------------------+
-| Name                     | Type        | Returns | Description                                                  |
-+--------------------------+-------------+---------+--------------------------------------------------------------+
-| | format(delimiter=None, | method      | str     | Format address with given formatting options.                |
-| |        group=None,     |             |         |                                                              |
-| |        upper=None)     |             |         | If an option is not specified,                               |
-|                          |             |         | the option defined by the class will be used.                |
-+--------------------------+-------------+---------+--------------------------------------------------------------+
-| verify(address)          | classmethod | bool    | Verify that address conforms to formatting defined by class. |
-+--------------------------+-------------+---------+--------------------------------------------------------------+
-| int                      | property    | int     | Integer representation of address.                           |
-+--------------------------+-------------+---------+--------------------------------------------------------------+
-| hex                      | property    | str     | Hexadecimal representation of address.                       |
-+--------------------------+-------------+---------+--------------------------------------------------------------+
-| bin                      | property    | str     | Binary representation of address.                            |
-+--------------------------+-------------+---------+--------------------------------------------------------------+
-| binary                   | property    | str     | Padded binary representation of each hex digit in address.   |
-+--------------------------+-------------+---------+--------------------------------------------------------------+
-
-
 Generic Hardware Address objects
 --------------------------------
 
@@ -80,6 +54,79 @@ Generic Hardware Address objects
 |        | | delimiter: '-'       |                                      |
 |        | | grouping: 8-4-4-4-12 |                                      |
 +--------+------------------------+--------------------------------------+
+
+**Common Methods/Classmethos/Properties**
+
+.. note::
+
+    All classes inheriting from `MAC` will have the following methods, classmethos, and properties.
+
++--------------------------+-------------+---------+--------------------------------------------------------------+
+| Name                     | Type        | Returns | Description                                                  |
++--------------------------+-------------+---------+--------------------------------------------------------------+
+| verify(address)          | classmethod | bool    | Verify that address conforms to formatting defined by class. |
++--------------------------+-------------+---------+--------------------------------------------------------------+
+| | format(delimiter=None, | method      | str     | Format address with given formatting options.                |
+| |        group=None,     |             |         |                                                              |
+| |        upper=None)     |             |         | If an option is not specified,                               |
+|                          |             |         | the option defined by the class will be used.                |
++--------------------------+-------------+---------+--------------------------------------------------------------+
+| int                      | property    | int     | Integer representation of address.                           |
++--------------------------+-------------+---------+--------------------------------------------------------------+
+| hex                      | property    | str     | Hexadecimal representation of address.                       |
++--------------------------+-------------+---------+--------------------------------------------------------------+
+| binary                   | property    | str     | Padded binary representation of each hex digit in address.   |
++--------------------------+-------------+---------+--------------------------------------------------------------+
+
+
+.. code:: python
+
+    >>> from hwaddress import MAC, MAC_64, GUID
+
+
+.. code:: python
+
+    >>> MAC.verify('12:34:56:78:90:ab')
+    True
+    >>> MAC.verify('12-34-56-78-90-ab')
+    False
+    >>> mac = MAC('12:34:56:78:90:ab')
+    >>> mac
+    MAC(12:34:56:78:90:ab)
+    >>> str(mac)
+    '12:34:56:78:90:ab'
+    >>> mac.format(delimiter='-')
+    '12-34-56-78-90-ab'
+    >>> mac.int
+    20015998341291
+    >>> mac.hex
+    '0x1234567890ab'
+    >>> mac.binary
+    '0001 0010 0011 0100 0101 0110 0111 1000 1001 0000 1010 1011'
+
+
+.. code:: python
+
+    >>> MAC_64.verify('12:34:56:78:90:ab')
+    False
+    >>> MAC_64.verify('12:34:56:78:90:ab:cd:ef')
+    True
+    >>> MAC_64('0x1234567890abcdef').format(group=4, upper=True)
+    '1234:5678:90AB:CDEF'
+
+
+.. code:: python
+
+    >>> GUID.verify('12345678-90ab-cdef-1234-567890abcdef')
+    True
+    >>> GUID.verify('1234-5678-90ab-cdef-1234-5678-90ab-cdef')
+    False
+    >>> guid = GUID('123-45678-90ab-cdef-1234-5678:90ab.cdef')
+    >>> guid
+    GUID(12345678-90ab-cdef-1234-567890abcdef)
+    >>> guid.format(':', 4)
+    '1234:5678:90ab:cdef:1234:5678:90ab:cdef'
+
 
 
 EUI Address objects

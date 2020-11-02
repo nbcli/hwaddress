@@ -18,9 +18,7 @@ class MAC():
         """Initialize address object.
 
         Args:
-            address: A string or integer representing the Hardware Address
-
-                Integers must fit into the bit length defined by cls._len_
+            address: A string representing the Hardware Address
 
                 Address string does not have to conform to any format.
                 '-', ':', '.', ' ', '', and '0x' will be removed from the
@@ -44,15 +42,10 @@ class MAC():
         if self._upper_ not in (True, False):
             raise AttributeError('_upper_ must be True or False')
 
-        if isinstance(address, int):
-            if address.bit_length() > self._len_:
-                raise ValueError(f'{address} can not fit in {self._len_} bits')
-            hexstr = hex(address)[2:]
-            self._proc_string_(hexstr.zfill(int(self._len_ / 4)))
-        elif isinstance(address, str):
+        if isinstance(address, str):
             self._proc_string_(address)
         else:
-            raise TypeError("'address' must be an integer or string.")
+            raise TypeError("'address' must be a string.")
 
         self._restrict_()
 
@@ -138,11 +131,6 @@ class MAC():
     def hex(self):
         """Hexadecimal representation of address."""
         return f'0x{"".join(self)}'
-
-    @property
-    def bin(self):
-        """Binary representation of address."""
-        return bin(self.int)
 
     @property
     def binary(self):
@@ -360,7 +348,7 @@ def get_address_factory(*args):
             except (TypeError, ValueError):
                 pass
 
-        raise ValueError(f'{address} does not seem to be any of {objs}.')
+        raise ValueError(f'{address} does not seem to be any of {args}.')
 
     return address_factory
 
@@ -372,7 +360,7 @@ def get_verifier(*args):
             if not issubclass(arg, MAC):
                 raise TypeError("args must be 'MAC' or subclass of 'MAC'.")
     else:
-        args = (MAC, MAC_64, EUI_48, EUI_64)
+        args = (MAC, EUI_48)
 
     def verifier(address):
         """Return True if address will verify.."""
