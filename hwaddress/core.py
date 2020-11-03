@@ -32,15 +32,19 @@ class MAC():
         """
         # check that self._len_ is evenly divisible by 4
         if (not isinstance(self._len_, int)) or (self._len_ % 4 != 0):
-            raise AttributeError(f'length must be an int divisible by 4')
+            raise AttributeError('length must be an int divisible by 4')
+
+        if not isinstance(self._del_, str):
+            raise AttributeError('delimiter must be a string')
 
         # check that self._grp_ is an int or tuple
         if not isinstance(self._grp_, (int, tuple)):
-            raise AttributeError(f'group must be an int or tuple.')
+            raise AttributeError('group must be an int or tuple.')
 
         # check that self._upper_ is True or False
-        if self._upper_ not in (True, False):
-            raise AttributeError('_upper_ must be True or False')
+        #if self._upper_ not in (True, False):
+        if not isinstance(self._upper_, bool):
+            raise AttributeError('upper must be True or False')
 
         if isinstance(address, str):
             self._proc_string_(address)
@@ -331,6 +335,47 @@ class IB_GID(MAC):
         return IB_GUID(''.join(self[16:]))
 
 
+def new_hwaddress_class(name,
+                        length=48,
+                        delimiter=':',
+                        grouping=2,
+                        upper=False):
+    """Return a class that is a subclass of MAC."""
+    if not isinstance(length, int):
+        raise TypeError('length must be an int')
+        
+    prop = dict(_len_=length,
+                _del_=delimiter,
+                _grp_=grouping,
+                _upper_=upper)
+
+    obj = type(name, (MAC,), prop)
+
+    # Try to create instance of object before returning
+    obj('0' * int(length / 4))
+
+    return obj
+
+
+def get_verifier(*args):
+    """Return address verifier with given hwaddress objects."""
+    if args:
+        for arg in args:
+            if not issubclass(arg, MAC):
+                raise TypeError("args must be 'MAC' or subclass of 'MAC'.")
+    else:
+        args = (MAC, EUI_48)
+
+    def verifier(address):
+        """Return True if address will verify.."""
+        for obj in args:
+            if obj.verify(address):
+                return True
+        return False
+
+    return verifier
+
+
 def get_address_factory(*args):
     """Return address factory with given hwaddress objects."""
     if args:
@@ -351,22 +396,3 @@ def get_address_factory(*args):
         raise ValueError(f'{address} does not seem to be any of {args}.')
 
     return address_factory
-
-
-def get_verifier(*args):
-    """Return address verifier with given hwaddress objects."""
-    if args:
-        for arg in args:
-            if not issubclass(arg, MAC):
-                raise TypeError("args must be 'MAC' or subclass of 'MAC'.")
-    else:
-        args = (MAC, EUI_48)
-
-    def verifier(address):
-        """Return True if address will verify.."""
-        for obj in args:
-            if obj.verify(address):
-                return True
-        return False
-
-    return verifier

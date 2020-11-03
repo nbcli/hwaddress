@@ -31,7 +31,7 @@ Common Methods/Classmethos/Properties
 +--------------------------+-------------+---------+--------------------------------------------------------------+
 
 
-Generic Hardware Address objects
+Generic Hardware Address Classes
 --------------------------------
 
 +--------+------------------------+--------------------------------------+
@@ -99,7 +99,7 @@ MAC, MAC_64, GUID Example usage
 
 
 
-EUI Address objects
+EUI Address Classes
 -------------------
 
 +--------+------------------------+--------------------------------+
@@ -162,7 +162,7 @@ EUI_48, EUI_64 Example usage
     OUI(ab:cd:56)
 
 
-WWN Address objects
+WWN Address Classes
 -------------------
 
 +------+-------------------+-------------------------------------------------+
@@ -196,8 +196,8 @@ WWN, WWNx Example usage
     >>> from hwaddress import WWN, WWNx
 
 
-IB Address objects
--------------------
+IB Address Classes
+------------------
 
 +---------+------------------------+-----------------------------------------+
 | IB_LID  | | bit-length: 16       | 0xffff                                  |
@@ -235,6 +235,13 @@ IB_LID, IB_GUID, IB_GID Example usage
 
 Factory Functions
 -----------------
+
+new_hwaddress_class(name, length=48, delimiter=':', grouping=2, upper=False)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. code:: python
+
+    >>> from hwaddress import new_hwaddress_class
 
 get_address_factory(\*args)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
