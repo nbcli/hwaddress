@@ -8,53 +8,20 @@ Lightweight python library for EUI-48, EUI-64 based hardware (MAC) addresses.
     :local:
 
 
-Common Methods/Classmethos/Properties
--------------------------------------
+Quick start & Example usage
+---------------------------
 
-**All classes inheriting from MAC will have the following methods, classmethos, and properties.**
+* Installing with pip
 
-+--------------------------+-------------+---------+--------------------------------------------------------------+
-| Name                     | Type        | Returns | Description                                                  |
-+--------------------------+-------------+---------+--------------------------------------------------------------+
-| verify(address)          | classmethod | bool    | Verify that address conforms to formatting defined by class. |
-+--------------------------+-------------+---------+--------------------------------------------------------------+
-| | format(delimiter=None, | method      | str     | Format address with given formatting options.                |
-| |        group=None,     |             |         |                                                              |
-| |        upper=None)     |             |         | If an option is not specified,                               |
-|                          |             |         | the option defined by the class will be used.                |
-+--------------------------+-------------+---------+--------------------------------------------------------------+
-| int                      | property    | int     | Integer representation of address.                           |
-+--------------------------+-------------+---------+--------------------------------------------------------------+
-| hex                      | property    | str     | Hexadecimal representation of address.                       |
-+--------------------------+-------------+---------+--------------------------------------------------------------+
-| binary                   | property    | str     | Padded binary representation of each hex digit in address.   |
-+--------------------------+-------------+---------+--------------------------------------------------------------+
+    .. code:: bash
 
+        $ pip install hwaddress
 
-Generic Hardware Address Classes
---------------------------------
+* Import Generic hwaddress objects
 
-+--------+------------------------+--------------------------------------+
-| MAC    | | bit-length: 48       | ff:ff:ff:ff:ff:ff                    |
-|        | | delimiter: ':'       |                                      |
-|        | | grouping: 2          |                                      |
-+--------+------------------------+--------------------------------------+
-| MAC_64 | | bit-length: 64       | ff:ff:ff:ff:ff:ff:ff:ff              |
-|        | | delimiter: ':'       |                                      |
-|        | | grouping: 2          |                                      |
-+--------+------------------------+--------------------------------------+
-| GUID   | | bit-length: 128      | ffffffff-ffff-ffff-ffff-ffffffffffff |
-|        | | delimiter: '-'       |                                      |
-|        | | grouping: 8-4-4-4-12 |                                      |
-+--------+------------------------+--------------------------------------+
+    .. code:: python
 
-
-MAC, MAC_64, GUID Example usage
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-.. code:: python
-
-    >>> from hwaddress import MAC, MAC_64, GUID
+        >>> from hwaddress import MAC, MAC_64, GUID
 
 .. code:: python
 
@@ -98,139 +65,93 @@ MAC, MAC_64, GUID Example usage
     '1234:5678:90ab:cdef:1234:5678:90ab:cdef'
 
 
+Included Hardware Address Classes
+---------------------------------
 
-EUI Address Classes
--------------------
-
-+--------+------------------------+--------------------------------+
-| EUI_48 | | bit-length: 48       | ff-ff-ff-ff-ff-ff              |
-|        | | delimiter: '-'       |                                |
-|        | | grouping: 2          |                                |
-+--------+------------------------+--------------------------------+
-| EUI_64 | | bit-length: 64       | ff-ff-ff-ff-ff-ff-ff-ff        |
-|        | | delimiter: '-'       |                                |
-|        | | grouping: 2          |                                |
-+--------+------------------------+--------------------------------+
-
-
-Common EUI Properties
-~~~~~~~~~~~~~~~~~~~~~
-
-+------+----------+---------+----------------------------------------+
-| Name | Type     | Returns | Description                            |
-+------+----------+---------+----------------------------------------+
-| oui  | property | str     | Integer representation of address.     |
-+------+----------+---------+----------------------------------------+
-| cid  | property | str     | Hexadecimal representation of address. |
-+------+----------+---------+----------------------------------------+
-| cid  | property | str     | Hexadecimal representation of address. |
-+------+----------+---------+----------------------------------------+
-
-
-EUI_48, EUI_64 Example usage
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-.. code:: python
-
-    >>> from hwaddress import EUI_48, EUI_64
-
-.. code:: python
-
-    >>> EUI_48.verify('12:34:56:78:90:ab')
-    False
-    >>> EUI_48.verify('12-34-56-78-90-ab')
-    True
-    >>> eui = EUI_48('12:34:56:78:90:ab')
-    >>> eui
-    EUI_48(12-34-56-78-90-ab)
-    >>> str(eui)
-    '12-34-56-78-90-ab'
-    >>> eui.oui
-    OUI(12:34:56)
-    >>> eui.cid
-    CID(12:34:56)
-    >>> eui.oui36
-    OUI36(12:34:56:78:9)
-
-.. code:: python
-
-    >>> EUI_64.verify('12-34-56-78-90-ab')
-    False
-    >>> EUI_64.verify('12-34-56-78-90-ab-cd-ef')
-    True
-    >>> EUI_64('ab-cd-56-78-90-ab-cd-ef').oui
-    OUI(ab:cd:56)
++---------+-------------------------------------------------+-----------------+
+| Name    | Format                                          | Properties      |
++=========+=================================================+=================+
+| MAC     | 12:34:56:78:90:ab                               |                 |
++---------+-------------------------------------------------+-----------------+
+| MAC_64  | 12:34:56:78:90:ab:cd:ef                         |                 |
++---------+-------------------------------------------------+-----------------+
+| GUID    | 12345678-90ab-cdef-1234-567890abcdef            |                 |
++---------+-------------------------------------------------+-----------------+
+| EUI_48  | 12-34-56-78-90-ab                               | oui, oui36, cid |
++---------+-------------------------------------------------+-----------------+
+| EUI_64  | 12-34-56-78-90-ab-cd-ef                         | oui, oui36, cid |
++---------+-------------------------------------------------+-----------------+
+| WWN     | 12:34:56:78:90:ab:cd:ef                         | naa, oui        |
++---------+-------------------------------------------------+-----------------+
+| WWNx    | 12:34:56:78:90:ab:cd:ef:12:34:56:78:90:ab:cd:ef | naa, oui        |
++---------+-------------------------------------------------+-----------------+
+| IB_LID  | 0x12ab                                          |                 |
++---------+-------------------------------------------------+-----------------+
+| IB_GUID | 1234:5678:90ab:cdef                             |                 |
++---------+-------------------------------------------------+-----------------+
+| IB_GID  | 1234:5678:90ab:cdef:1234:5678:90ab:cdef         | prefix, guid    |
++---------+-------------------------------------------------+-----------------+
 
 
-WWN Address Classes
--------------------
+Common Classmethods/Methods/Properties
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-+------+-------------------+-------------------------------------------------+
-| WWN  | | bit-length: 64  | ff:ff:ff:ff:ff:ff:ff:ff                         |
-|      | | delimiter: ':'  |                                                 |
-|      | | grouping: 2     |                                                 |
-+------+-------------------+-------------------------------------------------+
-| WWNx | | bit-length: 128 | ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff:ff |
-|      | | delimiter: '-'  |                                                 |
-|      | | grouping: 2     |                                                 |
-+------+-------------------+-------------------------------------------------+
+**All classes inheriting from MAC will have the following methods, classmethos, and properties.**
 
-
-Common WWN Properties
-~~~~~~~~~~~~~~~~~~~~~
-
-+------+----------+---------+----------------------------------------+
-| Name | Type     | Returns | Description                            |
-+------+----------+---------+----------------------------------------+
-| naa  | property | str     | Integer representation of address.     |
-+------+----------+---------+----------------------------------------+
-| oui  | property | str     | Hexadecimal representation of address. |
-+------+----------+---------+----------------------------------------+
++--------------------------+-------------+---------+--------------------------------------------------------------+
+| Name                     | Type        | Returns | Description                                                  |
++==========================+=============+=========+==============================================================+
+| verify(address)          | classmethod | bool    | Verify that address conforms to formatting defined by class. |
++--------------------------+-------------+---------+--------------------------------------------------------------+
+| | format(delimiter=None, | method      | str     | Format address with given formatting options.                |
+| |        group=None,     |             |         |                                                              |
+| |        upper=None)     |             |         | If an option is not specified,                               |
+|                          |             |         | the option defined by the class will be used.                |
++--------------------------+-------------+---------+--------------------------------------------------------------+
+| int                      | property    | int     | Integer representation of address.                           |
++--------------------------+-------------+---------+--------------------------------------------------------------+
+| hex                      | property    | str     | Hexadecimal representation of address.                       |
++--------------------------+-------------+---------+--------------------------------------------------------------+
+| binary                   | property    | str     | Padded binary representation of each hex digit in address.   |
++--------------------------+-------------+---------+--------------------------------------------------------------+
 
 
-WWN, WWNx Example usage
-~~~~~~~~~~~~~~~~~~~~~~~
+EUI Properties
+~~~~~~~~~~~~~~
 
-.. code:: python
++-------+---------+--------------------------------------------+
+| Name  | Returns | Description                                |
++=======+=========+============================================+
+| oui   | OIU     | 24-bit Organizationally Unique Identifier. |
++-------+---------+--------------------------------------------+
+| cid   | CID     | 24-bit Company ID.                         |
++-------+---------+--------------------------------------------+
+| oui36 | OUI36   | 36-bit Organizationally Unique Identifier. |
++-------+---------+--------------------------------------------+
 
-    >>> from hwaddress import WWN, WWNx
 
+WWN Properties
+~~~~~~~~~~~~~~
 
-IB Address Classes
-------------------
++------+---------+--------------------------------------------+
+| Name | Returns | Description                                |
++======+=========+============================================+
+| naa  | str     | Network Address Authority.                 |
++------+---------+--------------------------------------------+
+| oui  | OUI     | 24-bit Organizationally Unique Identifier. |
++------+---------+--------------------------------------------+
 
-+---------+------------------------+-----------------------------------------+
-| IB_LID  | | bit-length: 16       | 0xffff                                  |
-|         | | delimiter: ''        |                                         |
-|         | | grouping: 4          |                                         |
-+---------+------------------------+-----------------------------------------+
-| IB_GUID | | bit-length: 64       | ffff:ffff:ffff:ffff                     |
-|         | | delimiter: ':'       |                                         |
-|         | | grouping: 4          |                                         |
-+---------+------------------------+-----------------------------------------+
-| IB_GID  | | bit-length: 128      | ffff:ffff:ffff:ffff:ffff:ffff:ffff:ffff |
-|         | | delimiter: ';'       |                                         |
-|         | | grouping: 4          |                                         |
-+---------+------------------------+-----------------------------------------+
 
 IB_GID Properties
 ~~~~~~~~~~~~~~~~~
 
-+--------+----------+---------+----------------------------------------+
-| Name   | Type     | Returns | Description                            |
-+--------+----------+---------+----------------------------------------+
-| prefix | property | str     | Integer representation of address.     |
-+--------+----------+---------+----------------------------------------+
-| guid   | property | str     | Hexadecimal representation of address. |
-+--------+----------+---------+----------------------------------------+
-
-
-IB_LID, IB_GUID, IB_GID Example usage
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-.. code:: python
-
-    >>> from hwaddress import IB_LID, IB_GUID, IB_GID
++--------+---------------+--------------------------+
+| Name   | Returns       | Description              |
++========+===============+==========================+
+| prefix | IB_GID_prefix | 64-bit IB_GID_prefix.    |
++--------+---------------+--------------------------+
+| guid   | IB_GUID       | Embedded 64-bit IB_GUID. |
++--------+---------------+--------------------------+
 
 
 Factory Functions
