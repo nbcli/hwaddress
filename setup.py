@@ -1,3 +1,5 @@
+"""Setup hwaddress."""
+
 import setuptools
 
 with open("README.rst", "r") as fh:

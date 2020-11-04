@@ -42,7 +42,7 @@ class MAC():
             raise AttributeError('group must be an int or tuple.')
 
         # check that self._upper_ is True or False
-        #if self._upper_ not in (True, False):
+        # if self._upper_ not in (True, False):
         if not isinstance(self._upper_, bool):
             raise AttributeError('upper must be True or False')
 
@@ -341,7 +341,7 @@ def new_hwaddress_class(name,
     """Return a class that is a subclass of MAC."""
     if not isinstance(length, int):
         raise TypeError('length must be an int')
-        
+
     prop = dict(_len_=length,
                 _del_=delimiter,
                 _grp_=grouping,

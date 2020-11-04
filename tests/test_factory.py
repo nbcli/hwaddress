@@ -29,7 +29,7 @@ class GenericFactory(unittest.TestCase):
             self.assertIsInstance(hw_address(ti[0]), ti[1])
 
     def test_default_verifier(self):
-
+        """Test that the default verifier behaves as expected."""
         verifier = get_verifier()
 
         tlist = ['12:34:56:78:90:ab',
