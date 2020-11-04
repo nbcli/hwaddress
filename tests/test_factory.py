@@ -3,14 +3,9 @@
 from random import choice, choices
 from string import hexdigits
 import unittest
-from hwaddress import MAC, MAC_64, GUID, EUI_48, EUI_64, WWN, WWNx, \
-                      IB_LID, IB_GUID, IB_GID, get_address_factory
-
-# create factories for eui, wwn, and ib
-hw_address = get_address_factory()
-eui_address = get_address_factory(EUI_48, EUI_64)
-wwn_address = get_address_factory(WWN, WWNx)
-ib_address = get_address_factory(IB_LID, IB_GUID, IB_GID)
+from hwaddress import get_address_factory, get_verifier, \
+                      new_hwaddress_class, MAC, MAC_64, GUID, \
+                      EUI_48, EUI_64, WWN, WWNx, IB_LID, IB_GUID, IB_GID
 
 
 def getrandhex(n):
@@ -24,9 +19,49 @@ class GenericFactory(unittest.TestCase):
 
     def test_hw_rand_hex(self):
         """Test given hex strings returns correct MAC/GUID object."""
-        self.assertTrue(isinstance(hw_address(getrandhex(48)), MAC))
-        self.assertTrue(isinstance(hw_address(getrandhex(64)), MAC_64))
-        self.assertTrue(isinstance(hw_address(getrandhex(128)), GUID))
+        hw_address = get_address_factory()
+
+        testlist = [(getrandhex(48), MAC),
+                    (getrandhex(64), MAC_64),
+                    (getrandhex(128), GUID)]
+
+        for ti in testlist:
+            self.assertIsInstance(hw_address(ti[0]), ti[1])
+
+    def test_default_verifier(self):
+
+        verifier = get_verifier()
+
+        tlist = ['12:34:56:78:90:ab',
+                 '12-34-56-78-90-ab']
+
+        flist = ['12:34:56:78:90:ab:cd:ef',
+                 '12-34-56-78-90-ab-cd-ef',
+                 '1234.5678.90ab']
+
+        for ts in tlist:
+            self.assertTrue(verifier(ts))
+
+        for fs in flist:
+            self.assertFalse(verifier(fs))
+
+    def test_hw_verifier(self):
+        """Test verifier returns expected bool for MAC/MAC_64/GUID."""
+        hw_verifier = get_verifier(MAC, MAC_64, GUID)
+
+        tlist = ['12:34:56:78:90:ab',
+                 '12:34:56:78:90:ab:cd:ef',
+                 '12345678-90ab-cdef-1234-567890abcdef']
+
+        flist = ['12-34-56-78-90-ab',
+                 '12-34-56-78-90-ab-cd-ef',
+                 '12345678:90ab:cdef:1234:567890abcdef']
+
+        for ts in tlist:
+            self.assertTrue(hw_verifier(ts))
+
+        for fs in flist:
+            self.assertFalse(hw_verifier(fs))
 
 
 class EuiFactory(unittest.TestCase):
@@ -34,8 +69,29 @@ class EuiFactory(unittest.TestCase):
 
     def test_eui_rand_hex(self):
         """Test given hex strings returns correct EUI object."""
-        self.assertTrue(isinstance(eui_address(getrandhex(48)), EUI_48))
-        self.assertTrue(isinstance(eui_address(getrandhex(64)), EUI_64))
+        eui_address = get_address_factory(EUI_48, EUI_64)
+
+        testlist = [(getrandhex(48), EUI_48),
+                    (getrandhex(64), EUI_64)]
+
+        for ti in testlist:
+            self.assertIsInstance(eui_address(ti[0]), ti[1])
+
+    def test_eui_verifier(self):
+        """Test verifier returns expected bool for EUI_48/EUI_64."""
+        eui_verifier = get_verifier(EUI_48, EUI_64)
+
+        tlist = ['12-34-56-78-90-ab',
+                 '12-34-56-78-90-ab-cd-ef']
+
+        flist = ['12:34:56:78:90:ab',
+                 '12:34:56:78:90:ab:cd:ef']
+
+        for ts in tlist:
+            self.assertTrue(eui_verifier(ts))
+
+        for fs in flist:
+            self.assertFalse(eui_verifier(fs))
 
 
 class WwnFactory(unittest.TestCase):
@@ -43,10 +99,36 @@ class WwnFactory(unittest.TestCase):
 
     def test_wwn_rand_hex(self):
         """Test given hex strings returns correct WWN object."""
+        wwn_address = get_address_factory(WWN, WWNx)
+
         wwnhex = choice(('1', '2', '5')) + getrandhex(60)
         wwnxhex = '6' + getrandhex(124)
-        self.assertTrue(isinstance(wwn_address(wwnhex), WWN))
-        self.assertTrue(isinstance(wwn_address(wwnxhex), WWNx))
+
+        testlist = [(wwnhex, WWN),
+                    (wwnxhex, WWNx)]
+
+        for ti in testlist:
+            self.assertIsInstance(wwn_address(ti[0]), ti[1])
+
+    def test_wwn_verifier(self):
+        """Test verifier returns expected bool for WWN/WWNx."""
+        wwn_verifier = get_verifier(WWN, WWNx)
+
+        tlist = ['12:34:56:78:90:ab:cd:ef',
+                 '22:34:56:78:90:ab:cd:ef',
+                 '52:34:56:78:90:ab:cd:ef',
+                 '62:34:56:78:90:ab:cd:ef:62:34:56:78:90:ab:cd:ef']
+
+        flist = ['32:34:56:78:90:ab:cd:ef',
+                 '42:34:56:78:90:ab:cd:ef',
+                 '72:34:56:78:90:ab:cd:ef',
+                 '72:34:56:78:90:ab:cd:ef:62:34:56:78:90:ab:cd:ef']
+
+        for ts in tlist:
+            self.assertTrue(wwn_verifier(ts))
+
+        for fs in flist:
+            self.assertFalse(wwn_verifier(fs))
 
 
 class IbFactory(unittest.TestCase):
@@ -54,6 +136,61 @@ class IbFactory(unittest.TestCase):
 
     def test_ib_rand_hex(self):
         """Test given hex strings returns correct IB object."""
-        self.assertTrue(isinstance(ib_address(getrandhex(16)), IB_LID))
-        self.assertTrue(isinstance(ib_address(getrandhex(64)), IB_GUID))
-        self.assertTrue(isinstance(ib_address(getrandhex(128)), IB_GID))
+        ib_address = get_address_factory(IB_LID, IB_GUID, IB_GID)
+
+        testlist = [(getrandhex(16), IB_LID),
+                    (getrandhex(64), IB_GUID),
+                    (getrandhex(128), IB_GID)]
+
+        for ti in testlist:
+            self.assertIsInstance(ib_address(ti[0]), ti[1])
+
+    def test_ib_verifier(self):
+        """Test verifier returns expected bool for EUI_48/EUI_64."""
+        ib_verifier = get_verifier(IB_LID, IB_GUID, IB_GID)
+
+        tlist = ['0x12ab',
+                 '1234:5678:90ab:cdef',
+                 '1234:5678:90ab:cdef:1234:5678:90ab:cdef']
+
+        flist = ['12ab',
+                 '0x12abcd',
+                 '1234-5678-90ab-cdef',
+                 '12345678:90ab:cdef:1234:567890abcdef']
+
+        for ts in tlist:
+            self.assertTrue(ib_verifier(ts))
+
+        for fs in flist:
+            self.assertFalse(ib_verifier(fs))
+
+
+class NewClassFactory(unittest.TestCase):
+    """Test new_hwaddress_class factory function."""
+
+    def test_new_class(self):
+        """Test new_hwaddress_class factory function."""
+        modellist = [
+            {'args': ('T1MAC', 48, '.', 4, False),
+             'tlist': ['1234.5678.90ab',
+                       'abcd.ef12.3456'],
+             'flist': ['1234-5678-90ab',
+                       '1234.5678.90ab.cdef']},
+            {'args': ('T2MAC', 64, ' ', (4, 2, 2, 4, 4), False),
+             'tlist': ['1234 56 78 90ab cdef',
+                       'abcd ef 12 3456 7890'],
+             'flist': ['1234-56-78-90ab-cdef',
+                       '1234.56.78.90ab']}
+            ]
+
+        for model in modellist:
+            HwCls = new_hwaddress_class(*model['args'])
+
+            self.assertTrue(issubclass(HwCls, MAC))
+            self.assertIsInstance(HwCls(getrandhex(model['args'][1])), HwCls)
+
+            for ts in model['tlist']:
+                self.assertTrue(HwCls.verify(ts))
+
+            for fs in model['flist']:
+                self.assertFalse(HwCls.verify(fs))

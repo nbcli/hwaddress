@@ -270,8 +270,6 @@ class _WWN_Mixin_():
             return obj(''.join(self[4:10]))
         elif self.naa in ('5', '6'):
             return obj(''.join(self[1:7]))
-        else:
-            raise RuntimeError('WWN(x) NAA must be 1, 2, 5, or 6')
 
 
 class WWN(MAC, _WWN_Mixin_):
@@ -361,7 +359,7 @@ def get_verifier(*args):
     """Return address verifier with given hwaddress objects."""
     if args:
         for arg in args:
-            if not issubclass(arg, MAC):
+            if (not isinstance(arg, type)) or (not issubclass(arg, MAC)):
                 raise TypeError("args must be 'MAC' or subclass of 'MAC'.")
     else:
         args = (MAC, EUI_48)
@@ -380,7 +378,7 @@ def get_address_factory(*args):
     """Return address factory with given hwaddress objects."""
     if args:
         for arg in args:
-            if not issubclass(arg, MAC):
+            if (not isinstance(arg, type)) or (not issubclass(arg, MAC)):
                 raise TypeError("args must be 'MAC' or subclass of 'MAC'.")
     else:
         args = (MAC, MAC_64, GUID)
