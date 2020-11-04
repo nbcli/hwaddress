@@ -220,15 +220,15 @@ IB_GID Properties
 Factory Functions
 -----------------
 
-new_hwaddress_class(name, length=48, delimiter=':', grouping=2, upper=False)
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+new_hwaddress_class
+~~~~~~~~~~~~~~~~~~~
 
 .. code:: python
 
     >>> from hwaddress import new_hwaddress_class
 
-get_address_factory(\*args)
-~~~~~~~~~~~~~~~~~~~~~~~~~~~
+get_address_factory
+~~~~~~~~~~~~~~~~~~~
 
 Return a hwaddress object from objs tuple
 depending on the address passed as an argument.
@@ -247,8 +247,8 @@ depending on the address passed as an argument.
     >>> eui_address = get_address_factory(EUI_48, EUI_64)
 
 
-get_verifier(\*args)
-~~~~~~~~~~~~~~~~~~~~
+get_verifier
+~~~~~~~~~~~~
 
 .. code:: python
 

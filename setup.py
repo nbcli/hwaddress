@@ -7,7 +7,7 @@ with open("README.rst", "r") as fh:
 
 setuptools.setup(
     name="hwaddress",
-    version='0.0.1.dev1',
+    version='0.0.1.dev2',
     author="Eric Geldmacher",
     author_email="egeldmacher@wustl.edu",
     description="Lightweight EUI-48/64 based hardware (MAC) address library.",
