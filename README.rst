@@ -11,17 +11,75 @@ Lightweight python library for EUI-48, EUI-64 based hardware (MAC) addresses.
 Quick start & Example usage
 ---------------------------
 
-* Installing with pip
+Install hwaddress
 
-    .. code:: bash
+.. code:: bash
 
-        $ pip install hwaddress
+    $ pip install hwaddress
 
-* Import Generic hwaddress objects
+Import a few hwaddress classes and create instances
+by passing string representations of hardware address to them.
 
-    .. code:: python
+.. code:: python
 
-        >>> from hwaddress import MAC, MAC_64, GUID
+    >>> from hwaddress import MAC, MAC_64, EUI_48, EUI_64
+    >>>
+    >>> MAC('12:34:56:78:90:ab') 
+    MAC(12:34:56:78:90:ab)
+    >>>
+    >>> MAC_64('12:34:56:78:90:ab:cd:ef')
+    MAC_64(12:34:56:78:90:ab:cd:ef)
+    >>>
+    >>> EUI_48('12-34-56-78-90-ab')
+    EUI_48(12-34-56-78-90-ab)
+    >>>
+    >>> EUI_64('12-34-56-78-90-ab-cd-ef')
+    EUI_64(12-34-56-78-90-ab-cd-ef)
+
+Strings passed to hwaddress classes do not have to conform to a given format.
+All occurrences of :code:`'-', ':', '.', ' ', '0x'` are removed,
+and as long as the remaining characters are hexadecimal digits matching the 
+bit-length of the class, and instance will be created.
+
+The following list of strings are able to create instances of both :code:`MAC` and :code:`EUI_48` classes.
+
+.. code:: python
+
+    >>> maclist = ['12:34:56:78:90:ab', '23-78-ab-CD-43-ff', '0xABCDEF123456', '56 78 ab cd 12 54', '5432.abcd.3456', 'ab cdef.12-45:90']
+    >>>
+    >>> [MAC(mac) for mac in maclist]
+    [MAC(12:34:56:78:90:ab), MAC(23:78:ab:cd:43:ff), MAC(ab:cd:ef:12:34:56), MAC(56:78:ab:cd:12:54), MAC(54:32:ab:cd:34:56), MAC(ab:cd:ef:12:45:90)]
+    >>>
+    >>> [EUI_48(mac) for mac in maclist]
+    [EUI_48(12-34-56-78-90-ab), EUI_48(23-78-ab-cd-43-ff), EUI_48(ab-cd-ef-12-34-56), EUI_48(56-78-ab-cd-12-54), EUI_48(54-32-ab-cd-34-56), EUI_48(ab-cd-ef-12-45-90)]
+
+hwaddress classes have a `strict`_ classmethod that (by default) will only
+return an instance if it matches the format defined by the class.
+
+.. code:: python
+
+    >>> MAC.strict('12:34:56:78:90:ab')
+    MAC(12:34:56:78:90:ab)
+    >>>
+    >>> MAC.strict('12-34-56-78-90-ab')
+    Traceback (most recent call last):
+      File "<stdin>", line 1, in <module>
+      File "/Users/egeldmac/git/hwaddress/hwaddress/core.py", line 228, in strict
+        raise ValueError(f'{address} did not pass verification.')
+    ValueError: 12-34-56-78-90-ab did not pass verification.
+    >>>
+    >>> EUI_48.strict('12-34-56-78-90-ab')
+    EUI_48(12-34-56-78-90-ab)
+    >>>
+    >>> EUI_48.strict('12:34:56:78:90:ab')
+    Traceback (most recent call last):
+      File "<stdin>", line 1, in <module>
+      File "/Users/egeldmac/git/hwaddress/hwaddress/core.py", line 228, in strict
+        raise ValueError(f'{address} did not pass verification.')
+    ValueError: 12:34:56:78:90:ab did not pass verification.
+
+hwaddress classes also have a `verify`_ classmethod
+that check if a string conforms to the format specified by the class.
 
 .. code:: python
 
@@ -29,41 +87,51 @@ Quick start & Example usage
     True
     >>> MAC.verify('12-34-56-78-90-ab')
     False
-    >>> mac = MAC('12:34:56:78:90:ab')
-    >>> mac
-    MAC(12:34:56:78:90:ab)
-    >>> str(mac)
-    '12:34:56:78:90:ab'
-    >>> mac.format(delimiter='-')
-    '12-34-56-78-90-ab'
-    >>> mac.int
-    20015998341291
-    >>> mac.hex
-    '0x1234567890ab'
-    >>> mac.binary
-    '0001 0010 0011 0100 0101 0110 0111 1000 1001 0000 1010 1011'
+    >>>
+    >>> EUI_48.verify('12:34:56:78:90:ab')
+    False
+    >>> EUI_48.verify('12-34-56-78-90-ab')
+    True
+
+There is also a `get_verifier`_ factory function available that,
+when given hwaddress classes as arguments, will return a verifier function.
+This function will return True if the address passed conforms to the format of 
+any of the hwaddress classes passed to get_verifier.
 
 .. code:: python
 
-    >>> MAC_64.verify('12:34:56:78:90:ab')
-    False
-    >>> MAC_64.verify('12:34:56:78:90:ab:cd:ef')
+    >>> from hwaddress import get_verifier
+    >>>
+    >>> verifier = get_verifier(MAC, EUI_48)
+    >>>
+    >>> verifier('12:34:56:78:90:ab')
     True
-    >>> MAC_64('0x1234567890abcdef').format(group=4, upper=True)
-    '1234:5678:90AB:CDEF'
+    >>> verifier('12-34-56-78-90-ab')
+    True
+    >>> verifier('1234.5678.90ab')
+    False
+
+The resulting verifier can be used to filter a list of possible hardware
+addresses or be passed to the `strict`_ classmethod.
 
 .. code:: python
 
-    >>> GUID.verify('12345678-90ab-cdef-1234-567890abcdef')
-    True
-    >>> GUID.verify('1234-5678-90ab-cdef-1234-5678-90ab-cdef')
-    False
-    >>> guid = GUID('123-45678-90ab-cdef-1234-5678:90ab.cdef')
-    >>> guid
-    GUID(12345678-90ab-cdef-1234-567890abcdef)
-    >>> guid.format(':', 4)
-    '1234:5678:90ab:cdef:1234:5678:90ab:cdef'
-
+    >>> maclist
+    ['12:34:56:78:90:ab', '23-78-ab-CD-43-ff', '0xABCDEF123456', '56 78 ab cd 12 54', '5432.abcd.3456', 'ab cdef.12-45:90']
+    >>>
+    >>> [EUI_48(mac) for mac in filter(verifier, maclist)]
+    [EUI_48(12-34-56-78-90-ab), EUI_48(23-78-ab-cd-43-ff)]
+    >>>
+    >>> EUI_48.strict('12:34:56:78:90:ab', verifier=verifier)
+    EUI_48(12-34-56-78-90-ab)
+    >>> EUI_48.strict('12-34-56-78-90-ab', verifier=verifier)
+    EUI_48(12-34-56-78-90-ab)
+    >>> EUI_48.strict('1234.5678.90ab', verifier=verifier)
+    Traceback (most recent call last):
+      File "<stdin>", line 1, in <module>
+      File "/Users/egeldmac/git/hwaddress/hwaddress/core.py", line 228, in strict
+        raise ValueError(f'{address} did not pass verification.')
+    ValueError: 1234.5678.90ab did not pass verification.
 
 Included Hardware Address Classes
 ---------------------------------
