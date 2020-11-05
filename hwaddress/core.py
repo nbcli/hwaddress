@@ -203,6 +203,30 @@ class MAC():
 
         return True
 
+    @classmethod
+    def strict(cls, address, verifier=None):
+        """Create instance only if it passes verification.
+
+        If no verifier is passed, the classes verify classmethod will be used.
+        """
+        if verifier is None:
+            verifier = cls.verify
+
+        if not callable(verifier):
+            raise TypeError(f"'{type(verifier).__name__}' " +
+                            "object is not callable")
+
+        result = verifier(address)
+
+        if not isinstance(result, bool):
+            raise TypeError(f"verifier returned '{type(result).__name__}'. " +
+                            "Expected 'bool'.")
+
+        if result:
+            return cls(address)
+        else:
+            raise ValueError(f'{address} did not pass verification.')
+
 
 class MAC_64(MAC):
     """Generic 64 bit MAC address object."""

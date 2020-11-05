@@ -30,6 +30,7 @@ class RaiseError(unittest.TestCase):
         strerrlist = [1, True, 4.4, {}, (), [], MAC]
         interrlist = strerrlist[2:] + ['str']
         macerrlist = strerrlist[:-1]
+        strictlist = [5, list(), list, str]
 
         for ei in strerrlist:
             self.assertRaises(TypeError, MAC, ei)
@@ -46,7 +47,11 @@ class RaiseError(unittest.TestCase):
         for ei in macerrlist:
             self.assertRaises(TypeError, get_address_factory, ei)
 
+        for ei in strictlist:
+            self.assertRaises(TypeError, MAC.strict, '', verifier=ei)
+
     def test_value_error(self):
         """Test that ValueError is raised in given conditions."""
         self.assertRaises(ValueError, get_address_factory(), 'abcd')
         self.assertRaises(ValueError, MAC, '12:34:56:78:90:ag')
+        self.assertRaises(ValueError, MAC.strict, '12-34-56-78-90-ab')

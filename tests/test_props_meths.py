@@ -22,6 +22,8 @@ class MACProps(unittest.TestCase):
         self.assertEqual(mac.format(group=4), '1234:5678:90ab')
         self.assertEqual(mac.format(upper=True), '12:34:56:78:90:AB')
 
+        self.assertIsInstance(MAC.strict('12:34:56:78:90:ab'), MAC)
+
     def test_mac_comp(self):
         """Test comparisons."""
         mac1 = MAC('1234567890ab')

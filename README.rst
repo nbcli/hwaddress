@@ -98,24 +98,28 @@ Common Classmethods/Methods/Properties
 
 **All classes inheriting from MAC will have the following methods, classmethos, and properties.**
 
-+--------------------------+-------------+---------+--------------------------------------------------------------+
-| Name                     | Type        | Returns | Description                                                  |
-+==========================+=============+=========+==============================================================+
-| `verify`_                | classmethod | bool    | Verify that address conforms to formatting defined by class. |
-+--------------------------+-------------+---------+--------------------------------------------------------------+
-| `format`_                | method      | str     | Format address with given formatting options.                |
-+--------------------------+-------------+---------+--------------------------------------------------------------+
-| `int`_                   | property    | int     | Integer representation of address.                           |
-+--------------------------+-------------+---------+--------------------------------------------------------------+
-| `hex`_                   | property    | str     | Hexadecimal representation of address.                       |
-+--------------------------+-------------+---------+--------------------------------------------------------------+
-| `binary`_                | property    | str     | Padded binary representation of each hex digit in address.   |
-+--------------------------+-------------+---------+--------------------------------------------------------------+
++-----------+-------------+----------------+--------------------------------------------------------------+
+| Name      | Type        | Returns        | Description                                                  |
++===========+=============+================+==============================================================+
+| `verify`_ | classmethod | bool           | Verify that address conforms to formatting defined by class. |
++-----------+-------------+----------------+--------------------------------------------------------------+
+| `strict`_ | classmethod | class instance | Create instance only if it passes verification.              |
++-----------+-------------+----------------+--------------------------------------------------------------+
+| `format`_ | method      | str            | Format address with given formatting options.                |
++-----------+-------------+----------------+--------------------------------------------------------------+
+| `int`_    | property    | int            | Integer representation of address.                           |
++-----------+-------------+----------------+--------------------------------------------------------------+
+| `hex`_    | property    | str            | Hexadecimal representation of address.                       |
++-----------+-------------+----------------+--------------------------------------------------------------+
+| `binary`_ | property    | str            | Padded binary representation of each hex digit in address.   |
++-----------+-------------+----------------+--------------------------------------------------------------+
 
 .. _verify:
 
+|
 | **verify(address)**
 |   Verify that address conforms to formatting defined by class.
+|
 
 .. code:: python
 
@@ -124,8 +128,29 @@ Common Classmethods/Methods/Properties
     >>> hwaddress.MAC.verify('1234.5678.90ab')
     False
 
+.. _strict:
+
+|
+| **strict(address, verifier=None)**
+|   Create object only if it passes verification.
+|
+|   If no verifier is passed, the classes verify classmethod will be used.
+|
+
+.. code:: python
+
+    >>> MAC.strict('12:34:56:78:90:ab')
+    MAC(12:34:56:78:90:ab)
+    >>> MAC.strict('12-34-56-78-90-ab')
+    Traceback (most recent call last):
+      File "<stdin>", line 1, in <module>
+      File "/Users/egeldmac/git/hwaddress/hwaddress/core.py", line 228, in strict
+        raise ValueError(f'{address} did not pass verification.')
+    ValueError: 12-34-56-78-90-ab did not pass verification.
+
 .. _format:
 
+|
 | **format(self, delimiter=None, group=None, upper=None)**
 |   Format address with given formatting options.
 | 
@@ -136,6 +161,7 @@ Common Classmethods/Methods/Properties
 |     delimiter (str): character separating hex digits.
 |     group (int): how many hex digits in each group.
 |     upper (bool): True for uppercase, False for lowercase.
+|
 
 .. code:: python
 
