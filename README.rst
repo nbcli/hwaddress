@@ -22,19 +22,13 @@ by passing string representations of hardware address to them.
 
 .. code:: python
 
-    >>> from hwaddress import MAC, MAC_64, EUI_48, EUI_64
+    >>> from hwaddress import MAC, EUI_48
     >>>
     >>> MAC('12:34:56:78:90:ab') 
     MAC(12:34:56:78:90:ab)
     >>>
-    >>> MAC_64('12:34:56:78:90:ab:cd:ef')
-    MAC_64(12:34:56:78:90:ab:cd:ef)
-    >>>
     >>> EUI_48('12-34-56-78-90-ab')
     EUI_48(12-34-56-78-90-ab)
-    >>>
-    >>> EUI_64('12-34-56-78-90-ab-cd-ef')
-    EUI_64(12-34-56-78-90-ab-cd-ef)
 
 Strings passed to hwaddress classes do not have to conform to a given format.
 All occurrences of :code:`'-', ':', '.', ' ', '0x'` are removed,
@@ -124,8 +118,10 @@ addresses or be passed to the `strict`_ classmethod.
     >>>
     >>> EUI_48.strict('12:34:56:78:90:ab', verifier=verifier)
     EUI_48(12-34-56-78-90-ab)
+    >>>
     >>> EUI_48.strict('12-34-56-78-90-ab', verifier=verifier)
     EUI_48(12-34-56-78-90-ab)
+    >>>
     >>> EUI_48.strict('1234.5678.90ab', verifier=verifier)
     Traceback (most recent call last):
       File "<stdin>", line 1, in <module>
@@ -184,10 +180,12 @@ Common Classmethods/Methods/Properties
 
 .. _verify:
 
-|
-| **verify(address)**
-|   Verify that address conforms to formatting defined by class.
-|
+**verify(address)**
+
+::
+
+    Verify that address conforms to formatting defined by class.
+
 
 .. code:: python
 
@@ -198,12 +196,14 @@ Common Classmethods/Methods/Properties
 
 .. _strict:
 
-|
-| **strict(address, verifier=None)**
-|   Create object only if it passes verification.
-|
-|   If no verifier is passed, the classes verify classmethod will be used.
-|
+**strict(address, verifier=None)**
+
+::
+
+    Create object only if it passes verification.
+
+    If no verifier is passed, the classes verify classmethod will be used.
+
 
 .. code:: python
 
@@ -218,18 +218,20 @@ Common Classmethods/Methods/Properties
 
 .. _format:
 
-|
-| **format(self, delimiter=None, group=None, upper=None)**
-|   Format address with given formatting options.
-| 
-|   If an option is not specified,
-|   the option defined by the class will be used
-| 
-|   Args:
-|     delimiter (str): character separating hex digits.
-|     group (int): how many hex digits in each group.
-|     upper (bool): True for uppercase, False for lowercase.
-|
+**format(self, delimiter=None, group=None, upper=None)**
+
+::
+
+    Format address with given formatting options.
+
+    If an option is not specified,
+    the option defined by the class will be used
+
+    Args:
+      delimiter (str): character separating hex digits.
+      group (int): how many hex digits in each group.
+      upper (bool): True for uppercase, False for lowercase.
+
 
 .. code:: python
 
