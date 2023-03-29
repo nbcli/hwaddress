@@ -1,0 +1,21 @@
+pipeline:
+
+  build:
+    image: codeberg.org/nbcli/dev-tools:latest
+    commands:
+      - python setup.py sdist bdist_wheel
+    when:
+      event: pull_request
+
+  publish:
+    image: codeberg.org/nbcli/dev-tools:latest
+    commands:
+#      - python setup.py sdist bdist_wheel
+#      - twine upload dist/*
+      - echo Publishing
+    when:
+      event: tag
+      tag: v*
+
+when:
+  branch: [ release, develop ]
