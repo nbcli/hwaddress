@@ -25,5 +25,6 @@ classifiers = [
 line-length = 100
 
 [tool.flake8]
+extend-ignore = ["E203"]
 max-line-length = 100
 per-file-ignores = ["__init__.py:F401"]
