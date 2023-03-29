@@ -1,0 +1,33 @@
+pipeline:
+
+  lint:
+    image: codeberg.org/nbcli/dev-tools:latest
+    pull: true
+    commands:
+      - flake8 . --count
+    when:
+      status: [ success, failure ]
+
+  format:
+    image: codeberg.org/nbcli/dev-tools:latest
+    commands:
+      - black . --check
+    when:
+      status: [ success, failure ]
+
+  test:
+    image: codeberg.org/nbcli/dev-tools:latest
+    commands:
+      - coverage run -m pytest -v
+    when:
+      status: [ success, failure ]
+
+  coverage:
+    image: codeberg.org/nbcli/dev-tools:latest
+    commands:
+      - coverage report --fail-under=100
+    when:
+      status: [ success, failure ]
+
+when:
+  event: [push]
