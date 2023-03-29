@@ -2,17 +2,24 @@ pipeline:
 
   build:
     image: codeberg.org/nbcli/dev-tools:latest
+    pull: true
     commands:
-      - python setup.py sdist bdist_wheel
+      - python3 -m build
+      - twine check dist/*
     when:
-      event: pull_request
+      event: [push, pull_request]
 
   publish:
     image: codeberg.org/nbcli/dev-tools:latest
+    secrets:
+      - source: pypi_username
+        target: twine_username
+      - source: pypi_hwaddress_token
+        target: twine_password
     commands:
-#      - python setup.py sdist bdist_wheel
-#      - twine upload dist/*
-      - echo Publishing
+      - python3 -m build
+      - twine check dist/*
+      - twine upload dist/*
     when:
       event: tag
       tag: v*
