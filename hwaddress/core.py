@@ -1,17 +1,17 @@
 """Lightweight EUI-48, EUI-64 based hardware (MAC) address library."""
 
 
-class MAC():
+class MAC:
     """Generic 48 bit MAC address object.
 
     Base object for other hardware address objects..
     """
 
-    _del_opts_ = ('-', ':', '.', ' ', '')
+    _del_opts_ = ("-", ":", ".", " ", "")
 
-    _len_ = 48      # length of address in bits. multiple of 4
-    _grp_ = 2       # default group size of hex digits, (1, 2, 3, 4)
-    _del_ = ':'     # default delimiter, ('-', ':', '.', ' ', '')
+    _len_ = 48  # length of address in bits. multiple of 4
+    _grp_ = 2  # default group size of hex digits, (1, 2, 3, 4)
+    _del_ = ":"  # default delimiter, ("-", ":", ".", " ", "")
     _upper_ = False
 
     def __init__(self, address):
@@ -32,19 +32,19 @@ class MAC():
         """
         # check that self._len_ is evenly divisible by 4
         if (not isinstance(self._len_, int)) or (self._len_ % 4 != 0):
-            raise AttributeError('length must be an int divisible by 4')
+            raise AttributeError("length must be an int divisible by 4")
 
         if not isinstance(self._del_, str):
-            raise AttributeError('delimiter must be a string')
+            raise AttributeError("delimiter must be a string")
 
         # check that self._grp_ is an int or tuple
         if not isinstance(self._grp_, (int, tuple)):
-            raise AttributeError('group must be an int or tuple.')
+            raise AttributeError("group must be an int or tuple.")
 
         # check that self._upper_ is True or False
         # if self._upper_ not in (True, False):
         if not isinstance(self._upper_, bool):
-            raise AttributeError('upper must be True or False')
+            raise AttributeError("upper must be True or False")
 
         if isinstance(address, str):
             self._proc_string_(address)
@@ -97,23 +97,23 @@ class MAC():
 
     def __hash__(self):
         """Make hashable."""
-        return hash(f'{self.__class__}{self._digits_}')
+        return hash(f"{self.__class__}{self._digits_}")
 
     def __repr__(self):
         """Repr based on class name and __str__."""
-        return f'{self.__class__.__name__}({str(self)})'
+        return f"{self.__class__.__name__}({str(self)})"
 
     def __str__(self):
         """Create string based on delimiter, group, and upper."""
         grp = self._grp_
 
         if isinstance(grp, int):
-            parts = [''.join(self[i:i+grp]) for i in range(0, len(self), grp)]
+            parts = ["".join(self[i : i + grp]) for i in range(0, len(self), grp)]
         elif isinstance(grp, tuple):
             parts = []
             s = 0
             for i in grp:
-                parts.append(''.join(self[s:s+i]))
+                parts.append("".join(self[s : s + i]))
                 s += i
 
         string = self._del_.join(parts)
@@ -121,8 +121,8 @@ class MAC():
         if self._upper_:
             string = string.upper()
 
-        if self._del_ == '':
-            return f'0x{string}'
+        if self._del_ == "":
+            return f"0x{string}"
 
         return string
 
@@ -143,7 +143,7 @@ class MAC():
         Binary groups are padded with '0's to be 4 bits long,
         and are separated with a space to improve readability.
         """
-        return ' '.join([bin(int(d, 16))[2:].zfill(4) for d in self])
+        return " ".join([bin(int(d, 16))[2:].zfill(4) for d in self])
 
     def format(self, delimiter=None, group=None, upper=None):
         """Format address with given formatting options.
@@ -162,14 +162,12 @@ class MAC():
         if upper not in (True, False):
             upper = self._upper_
 
-        prop = dict(_del_=delimiter,
-                    _grp_=group or self._grp_,
-                    _upper_=upper)
+        prop = dict(_del_=delimiter, _grp_=group or self._grp_, _upper_=upper)
 
-        if delimiter == '':
-            prop['_del_'] = delimiter
+        if delimiter == "":
+            prop["_del_"] = delimiter
 
-        obj = type('_', (self.__class__,), prop)(self.hex)
+        obj = type("_", (self.__class__,), prop)(self.hex)
 
         return str(obj)
 
@@ -177,9 +175,9 @@ class MAC():
     def verify(cls, address):
         """Verify that address conforms to formatting defined by class."""
         if not isinstance(address, str):
-            raise TypeError('address must be a srting.')
+            raise TypeError("address must be a srting.")
 
-        if cls._del_ != '':
+        if cls._del_ != "":
             grps = address.split(cls._del_)
             if isinstance(cls._grp_, tuple):
                 if cls._grp_ != tuple(len(g) for g in grps):
@@ -190,7 +188,7 @@ class MAC():
                         return False
 
         else:
-            if not address.startswith('0x'):
+            if not address.startswith("0x"):
                 return False
             address = address[2:]
             if (len(address) * 4) != cls._len_:
@@ -213,19 +211,17 @@ class MAC():
             verifier = cls.verify
 
         if not callable(verifier):
-            raise TypeError(f"'{type(verifier).__name__}' " +
-                            "object is not callable")
+            raise TypeError(f"'{type(verifier).__name__}' object is not callable")
 
         result = verifier(address)
 
         if not isinstance(result, bool):
-            raise TypeError(f"verifier returned '{type(result).__name__}'. " +
-                            "Expected 'bool'.")
+            raise TypeError(f"verifier returned '{type(result).__name__}'. Expected 'bool'.")
 
         if result:
             return cls(address)
         else:
-            raise ValueError(f'{address} did not pass verification.')
+            raise ValueError(f"{address} did not pass verification.")
 
 
 class MAC_64(MAC):
@@ -239,61 +235,56 @@ class GUID(MAC):
 
     _len_ = 128
     _grp_ = (8, 4, 4, 4, 12)
-    _del_ = '-'
+    _del_ = "-"
 
 
-class _EUI_Mixin_():
+class _EUI_Mixin_:
     """Define properties for EUI objects."""
 
     @property
     def oui(self):
-
-        obj = type('OUI', (MAC,), dict(_len_=24))
-        return obj(''.join(self[:6]))
+        obj = type("OUI", (MAC,), dict(_len_=24))
+        return obj("".join(self[:6]))
 
     @property
     def cid(self):
-
-        obj = type('CID', (MAC,), dict(_len_=24))
-        return obj(''.join(self[:6]))
+        obj = type("CID", (MAC,), dict(_len_=24))
+        return obj("".join(self[:6]))
 
     @property
     def oui36(self):
-
-        obj = type('OUI36', (MAC,), dict(_len_=36))
-        return obj(''.join(self[:9]))
+        obj = type("OUI36", (MAC,), dict(_len_=36))
+        return obj("".join(self[:9]))
 
 
 class EUI_48(MAC, _EUI_Mixin_):
     """Represent single EUI-48 object."""
 
-    _del_ = '-'
+    _del_ = "-"
 
 
 class EUI_64(MAC, _EUI_Mixin_):
     """Represent single EUI-64 object."""
 
     _len_ = 64
-    _del_ = '-'
+    _del_ = "-"
 
 
-class _WWN_Mixin_():
+class _WWN_Mixin_:
     """Define properties for WWN objects."""
 
     @property
     def naa(self):
-
         return self[0]
 
     @property
     def oui(self):
+        obj = type("OUI", (MAC,), dict(_len_=24))
 
-        obj = type('OUI', (MAC,), dict(_len_=24))
-
-        if self.naa in ('1', '2'):
-            return obj(''.join(self[4:10]))
-        elif self.naa in ('5', '6'):
-            return obj(''.join(self[1:7]))
+        if self.naa in ("1", "2"):
+            return obj("".join(self[4:10]))
+        elif self.naa in ("5", "6"):
+            return obj("".join(self[1:7]))
 
 
 class WWN(MAC, _WWN_Mixin_):
@@ -302,9 +293,8 @@ class WWN(MAC, _WWN_Mixin_):
     _len_ = 64
 
     def _restrict_(self):
-
-        if self[0] not in ('1', '2', '5'):
-            raise ValueError('First hex digit for WWN must be 1, 2, or 5')
+        if self[0] not in ("1", "2", "5"):
+            raise ValueError("First hex digit for WWN must be 1, 2, or 5")
 
 
 class WWNx(MAC, _WWN_Mixin_):
@@ -313,16 +303,15 @@ class WWNx(MAC, _WWN_Mixin_):
     _len_ = 128
 
     def _restrict_(self):
-
-        if self[0] != '6':
-            raise ValueError('First hex digit for WWNx must be 6')
+        if self[0] != "6":
+            raise ValueError("First hex digit for WWNx must be 6")
 
 
 class IB_LID(MAC):
     """Represent single 16 bit Infiniband LID object."""
 
     _len_ = 16
-    _del_ = ''
+    _del_ = ""
     _grp_ = 4
 
 
@@ -330,7 +319,7 @@ class IB_GUID(EUI_64):
     """Represent single 64 bit Infiniband GUID object."""
 
     _len_ = 64
-    _del_ = ':'
+    _del_ = ":"
     _grp_ = 4
 
 
@@ -338,43 +327,34 @@ class IB_GID(MAC):
     """Represent single 128 bit Infiniband GID object."""
 
     _len_ = 128
-    _del_ = ':'
+    _del_ = ":"
     _grp_ = 4
 
     @property
     def prefix(self):
         """Return embedded 64 bit Infiniband GID prefix."""
-        prop = dict(_len_=64,
-                    _del_=':',
-                    _grp_=4)
+        prop = dict(_len_=64, _del_=":", _grp_=4)
 
-        obj = type('IB_GID_prefix', (MAC,), prop)
-        return obj(''.join(self[:16]))
+        obj = type("IB_GID_prefix", (MAC,), prop)
+        return obj("".join(self[:16]))
 
     @property
     def guid(self):
         """Return embedded 64 bit Infiniband GUID."""
-        return IB_GUID(''.join(self[16:]))
+        return IB_GUID("".join(self[16:]))
 
 
-def new_hwaddress_class(name,
-                        length=48,
-                        delimiter=':',
-                        grouping=2,
-                        upper=False):
+def new_hwaddress_class(name, length=48, delimiter=":", grouping=2, upper=False):
     """Return a class that is a subclass of MAC."""
     if not isinstance(length, int):
-        raise TypeError('length must be an int')
+        raise TypeError("length must be an int")
 
-    prop = dict(_len_=length,
-                _del_=delimiter,
-                _grp_=grouping,
-                _upper_=upper)
+    prop = dict(_len_=length, _del_=delimiter, _grp_=grouping, _upper_=upper)
 
     obj = type(name, (MAC,), prop)
 
     # Try to create instance of object before returning
-    obj('0' * int(length / 4))
+    obj("0" * int(length / 4))
 
     return obj
 
@@ -415,6 +395,6 @@ def get_address_factory(*args):
             except (TypeError, ValueError):
                 pass
 
-        raise ValueError(f'{address} does not seem to be any of {args}.')
+        raise ValueError(f"{address} does not seem to be any of {args}.")
 
     return address_factory
