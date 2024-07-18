@@ -1,6 +1,6 @@
-pipeline:
+steps:
 
-  build:
+  - name: build
     image: codeberg.org/nbcli/dev-tools:latest
     pull: true
     commands:
@@ -9,20 +9,20 @@ pipeline:
     when:
       event: [push, pull_request]
 
-  publish:
+  - name: publish
     image: codeberg.org/nbcli/dev-tools:latest
-    secrets:
-      - source: pypi_username
-        target: twine_username
-      - source: pypi_hwaddress_token
-        target: twine_password
+    environment:
+      TWINE_USERNAME:
+        from_secret: pypi_username
+      TWINE_PASSWORD:
+        from_secret: pypi_hwaddress_token
     commands:
       - python3 -m build
       - twine check dist/*
       - twine upload dist/*
     when:
       event: tag
-      tag: v*
+      ref: refs/tags/v*
 
 when:
   branch: [ release, develop ]
